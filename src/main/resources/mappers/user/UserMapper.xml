@@ -18,4 +18,8 @@
         VALUES (#{email}, #{password}, #{name}, #{role})
     </insert>
 
+    <select id="login" resultType="com.ssafy.homesage.domain.user.model.entity.User" parameterType="string">
+        SELECT email, password, name, role FROM users WHERE email = #{email}
+    </select>
+
 </mapper>

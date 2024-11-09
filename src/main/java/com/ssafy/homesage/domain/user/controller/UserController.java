@@ -3,9 +3,8 @@ package com.ssafy.homesage.domain.user.controller;
 import java.util.List;
 
 import com.ssafy.homesage.domain.user.exception.DuplicatedEmailException;
-import com.ssafy.homesage.domain.user.model.dto.UserTestResponseDto;
-import com.ssafy.homesage.domain.user.model.dto.UserSignUpRequestDto;
-import com.ssafy.homesage.domain.user.model.dto.UserSignUpResponseDto;
+import com.ssafy.homesage.domain.user.exception.LoginFailException;
+import com.ssafy.homesage.domain.user.model.dto.*;
 import com.ssafy.homesage.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -35,6 +34,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.CREATED).body(userSignUpResponseDto);
         } catch (DuplicatedEmailException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+        }
+    }
+
+    // 로그인
+    @PostMapping("/login")
+    private ResponseEntity<?> login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
+        try {
+            UserLoginResponseDto userLoginResponseDto = userService.login(userLoginRequestDto);
+            return ResponseEntity.status(HttpStatus.OK).body(userLoginResponseDto);
+        } catch (LoginFailException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login Fail");
         }
     }
 

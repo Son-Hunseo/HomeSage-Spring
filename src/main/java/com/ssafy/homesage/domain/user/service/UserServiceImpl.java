@@ -1,10 +1,9 @@
 package com.ssafy.homesage.domain.user.service;
 
 import com.ssafy.homesage.domain.user.exception.DuplicatedEmailException;
+import com.ssafy.homesage.domain.user.exception.LoginFailException;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
-import com.ssafy.homesage.domain.user.model.dto.UserTestResponseDto;
-import com.ssafy.homesage.domain.user.model.dto.UserSignUpRequestDto;
-import com.ssafy.homesage.domain.user.model.dto.UserSignUpResponseDto;
+import com.ssafy.homesage.domain.user.model.dto.*;
 import com.ssafy.homesage.domain.user.model.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,5 +53,20 @@ public class UserServiceImpl implements UserService {
 
             return new UserSignUpResponseDto(user.getName());
         }
+    }
+
+    @Override
+    public UserLoginResponseDto login(UserLoginRequestDto userLoginRequestDto) throws LoginFailException {
+
+        User user = userMapper.login(userLoginRequestDto.email());
+        String enteredPassword = userLoginRequestDto.password();
+
+        if (passwordEncoder.matches(enteredPassword, user.getPassword())) {
+            return new UserLoginResponseDto(user.getName());
+        }
+        else {
+            throw new LoginFailException();
+        }
+
     }
 }

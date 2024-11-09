@@ -9,15 +9,13 @@ import lombok.Getter;
 @Getter
 public class User extends BaseEntity {
 
-    private Long userId;
     private String email;
     private String password;
     private String name;
     private UserRole role;
 
     @Builder
-    public User(Long userId, String email, String password, String name, UserRole role) {
-        this.userId = userId;
+    public User(String email, String password, String name, UserRole role) {
         this.email = email;
         this.password = password;
         this.name = name;

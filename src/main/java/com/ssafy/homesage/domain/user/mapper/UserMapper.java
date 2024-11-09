@@ -9,4 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 public interface UserMapper {
 
     List<User> findAllUsers();
+
+    boolean checkDuplicateEmail(String email);
+
+    void signUp(User user);
 }

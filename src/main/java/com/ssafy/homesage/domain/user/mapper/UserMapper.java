@@ -13,4 +13,6 @@ public interface UserMapper {
     boolean checkDuplicateEmail(String email);
 
     void signUp(User user);
+
+    User login(String email);
 }

@@ -1,10 +1,9 @@
 package com.ssafy.homesage.domain.user.controller;
 
-import java.net.URI;
 import java.util.List;
 
 import com.ssafy.homesage.domain.user.exception.DuplicatedEmailException;
-import com.ssafy.homesage.domain.user.model.dto.UserGetResponseDto;
+import com.ssafy.homesage.domain.user.model.dto.UserTestResponseDto;
 import com.ssafy.homesage.domain.user.model.dto.UserSignUpRequestDto;
 import com.ssafy.homesage.domain.user.model.dto.UserSignUpResponseDto;
 import com.ssafy.homesage.domain.user.service.UserService;
@@ -24,7 +23,7 @@ public class UserController {
     // 모든 유저 반환
     @GetMapping
     private ResponseEntity<?> getFirstUser() {
-        List<UserGetResponseDto> response = userService.getAllUsers();
+        List<UserTestResponseDto> response = userService.getAllUsers();
         return ResponseEntity.ok(response);
     }
 

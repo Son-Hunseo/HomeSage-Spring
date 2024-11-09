@@ -6,7 +6,7 @@
 <mapper namespace="com.ssafy.homesage.domain.user.mapper.UserMapper">
 
     <select id="findAllUsers" resultType="com.ssafy.homesage.domain.user.model.entity.User">
-        SELECT * FROM users
+        SELECT email, password, name, role FROM users
     </select>
 
     <select id="checkDuplicateEmail" resultType="boolean" parameterType="string">

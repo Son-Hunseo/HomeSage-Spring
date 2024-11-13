@@ -20,7 +20,6 @@ public class UserController {
 
     private final UserService userService;
 
-    // 서버 테스트용
     // 모든 유저 반환
     @GetMapping
     private ResponseEntity<?> getFirstUser() {

@@ -8,6 +8,7 @@ import com.ssafy.homesage.global.error.ErrorCode;
 import com.ssafy.homesage.global.error.ErrorResponse;
 import com.ssafy.homesage.global.util.HeaderUtil;
 import com.ssafy.homesage.global.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -22,6 +23,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final AuthService authService;
+
+    @Value("${server.ip}")
+    String serverIp;
 
     public JwtFilter(JwtUtil jwtUtil, AuthService authService ) {
         this.jwtUtil = jwtUtil;
@@ -59,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if(httpServletRequest.getMethod().equals("OPTIONS")) {
             httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
             httpServletResponse.setHeader("Access-Control-Allow-Headers", "content-type, authorization");
-            httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+            httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://" + serverIp + ":5173");
             httpServletResponse.setStatus(HttpStatus.OK.value());
 
             return;
@@ -97,7 +101,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if(accessToken == null || !jwtUtil.isValidToken(accessToken, "AccessToken") || !authService.isValidToken(accessToken)) {
                 httpServletResponse.setStatus(ErrorCode.REFRESH_TOKEN_EXPIRED.getHttpStatus());
                 httpServletResponse.setContentType("application/json;charset=UTF-8");
-                httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+                httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://" + serverIp +":5173");
 
                 ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.REFRESH_TOKEN_EXPIRED);
 

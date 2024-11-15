@@ -7,4 +7,6 @@ import java.util.List;
 public interface UserService {
 
     List<UserTestResponseDto> getAllUsers();
+
+    void changedPassword(String accessToken, UserChangedPwRequestDto userChangedPwRequestDto);
 }

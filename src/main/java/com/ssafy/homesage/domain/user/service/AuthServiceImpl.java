@@ -15,10 +15,12 @@ import com.ssafy.homesage.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class AuthServiceImpl implements AuthService {
 
     private final AuthMapper authMapper;
@@ -26,14 +28,17 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
 
     @Override
+    @Transactional
     public void signUp(UserSignUpRequestDto userSignUpRequestDto) {
-        log.info("[AuthService signUp()] signUp start");
-        // 비밀번호와 비밀번호 확인이 다른 경우 예외 발생.
+        // 이미 존재하는 계정 (이메일) 이면 예외 발생
+        checkEmail(userSignUpRequestDto.email());
+
+        // 비밀번호와 비밀번호 확인이 다른 경우 예외 발생
         if(!userSignUpRequestDto.password().equals(userSignUpRequestDto.retryPassword())) {
             throw new MismatchPasswordException();
         }
 
-        // 비밀번호를 해시 후 전달.
+        // 비밀번호를 해시 후 전달
         UserSignUpRequestDto signUpRequestDto = UserSignUpRequestDto.builder()
                 .email(userSignUpRequestDto.email())
                 .password(hashUtil.getDigest(userSignUpRequestDto.password()))
@@ -53,6 +58,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserLoginResponseDto login(UserLoginRequestDto userLoginRequestDto) {
         // 비밀번호를 암호화 한 Dto 새로 생성
         UserLoginRequestDto loginRequestDto = UserLoginRequestDto.builder()
@@ -81,6 +87,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public int logout(String accessToken) {
         // 토큰에서 사용자의 이메일 추출
         String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
@@ -91,6 +98,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public Token reGenerateToken(String refreshToken) {
         // refreshToken 에서 사용자 이메일 추출
         String userEmail = jwtUtil.getUserEmail(refreshToken, "RefreshToken");

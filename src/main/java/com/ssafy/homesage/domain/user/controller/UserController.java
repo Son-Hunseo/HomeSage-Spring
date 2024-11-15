@@ -11,14 +11,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -40,6 +39,8 @@ public class UserController {
     public ResponseEntity<?> changedPassword(
             HttpServletRequest request,
             @RequestBody UserChangedPwRequestDto userChangedPwRequestDto) {
+        log.info("[UserController changedPassword()] password: {}, newPassword: {}",
+                userChangedPwRequestDto.password(), userChangedPwRequestDto.newPassword());
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
         userService.changedPassword(accessToken, userChangedPwRequestDto);

@@ -3,6 +3,7 @@ package com.ssafy.homesage.domain.user.mapper;
 import java.util.List;
 
 import com.ssafy.homesage.domain.user.model.entity.User;
+import com.ssafy.homesage.domain.user.model.entity.UserInterestedSales;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
@@ -67,4 +68,14 @@ public interface UserMapper {
         WHERE sale_id = #{saleId} AND user_id = #{userId}
     """)
     void deleteInterest(Long saleId, Long userId);
+
+    /**
+     * 찜 목록 조회
+     */
+    @Select("""
+        SELECT * 
+        FROM user_interested_sales
+        WHERE user_id = #{userId}
+    """)
+    List<UserInterestedSales> findAllUserInterestedSales(Long userId);
 }

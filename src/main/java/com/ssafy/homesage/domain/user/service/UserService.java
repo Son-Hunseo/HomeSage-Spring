@@ -12,4 +12,6 @@ public interface UserService {
     void changedPassword(String accessToken, UserChangedPwRequestDto userChangedPwRequestDto);
 
     Map<String, Boolean> interest(String accessToken, Long saleId);
+
+    List<InterestedSalesResponse> interestList(String accessToken);
 }

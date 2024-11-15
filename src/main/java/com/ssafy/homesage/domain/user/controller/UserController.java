@@ -69,10 +69,22 @@ public class UserController {
         return ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "찜목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "찜목록 반환"),
+            @ApiResponse(responseCode = "204", description = "찜목록이 없습니다.")
+    })
+    @GetMapping("/interestList")
+    public ResponseEntity<?> interestList(
+            HttpServletRequest request) {
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
 
-    /**
-     * 찜 목록 조회
-     */
+        // 찜목록 조회
+        List<InterestedSalesResponse> interestedSalesResponseList = userService.interestList(accessToken);
+
+        return ResponseEntity.ok(interestedSalesResponseList);
+    }
 
     /**
      * 예약

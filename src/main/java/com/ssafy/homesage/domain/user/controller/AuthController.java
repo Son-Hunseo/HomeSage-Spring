@@ -30,7 +30,7 @@ public class AuthController {
     private final AuthService authService;
 
     @Value("${server.ip}")
-    String ip;
+    private String serverIp;
 
     @Operation(summary = "회원가입")
     @ApiResponses(value = {
@@ -39,7 +39,6 @@ public class AuthController {
     })
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody UserSignUpRequestDto userSignUpRequestDto) {
-        System.out.println("test");
         authService.signUp(userSignUpRequestDto);
 
         return ResponseEntity
@@ -68,6 +67,7 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
+        log.info("server.ip : {}", serverIp);
         // AccessToken, RefreshToken 생성
         UserLoginResponseDto userLoginResponseDto = authService.login(userLoginRequestDto);
 
@@ -79,7 +79,7 @@ public class AuthController {
         // RefreshToken 을 HttpOnly Cookie 로 전달
         ResponseCookie responseCookie = ResponseCookie
                 .from(HeaderUtil.getRefreshCookieName(), userLoginResponseDto.refreshToken())
-                .domain("localhost") // 어떤 사이트에서 쿠키를 사용할 수 있도록 허용할지 설정
+                .domain(serverIp) // 어떤 사이트에서 쿠키를 사용할 수 있도록 허용할지 설정
                 .path("/") // 사이트 내 쿠키 허용 경로 설정
                 .httpOnly(true) // HTTP 통신을 위해서만 사용하도록 설정
                 .secure(true) // Set-Cookie 설정
@@ -109,7 +109,7 @@ public class AuthController {
         HttpHeaders httpHeaders = new HttpHeaders();
         ResponseCookie responseCookie = ResponseCookie
                 .from(HeaderUtil.getRefreshCookieName(), "")
-                .domain("localhost") //
+                .domain(serverIp)
                 .path("/")
                 .httpOnly(true)
                 .secure(true)

@@ -1,9 +1,6 @@
 package com.ssafy.homesage.domain.user.controller;
 
-import com.ssafy.homesage.domain.user.exception.DuplicatedEmailException;
-import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
-import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
-import com.ssafy.homesage.domain.user.exception.UserNotFoundException;
+import com.ssafy.homesage.domain.user.exception.*;
 import com.ssafy.homesage.global.error.ErrorCode;
 import com.ssafy.homesage.global.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,9 +46,18 @@ public class UserExceptionHandler {
 
     @Operation(summary = "찜목록이 없음")
     @ExceptionHandler(value = {EmptyInterestedSalesException.class})
-    public ResponseEntity<?> emptyInterestedSales(NullPointerException e) {
+    public ResponseEntity<?> emptyInterestedSalesHandler(NullPointerException e) {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_INTERESTED);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @Operation(summary = "이미 예약 된 건물")
+    @ExceptionHandler(value = {DuplicateReservationException.class})
+    public ResponseEntity<?> duplicateReservationHandler(RuntimeException e) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.DUPLICATE_RESERVATION);
 
         return ResponseEntity.badRequest().body(errorResponse);
     }

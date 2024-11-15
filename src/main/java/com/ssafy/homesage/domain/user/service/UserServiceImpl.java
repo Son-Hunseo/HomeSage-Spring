@@ -1,19 +1,26 @@
 package com.ssafy.homesage.domain.user.service;
 
+import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
 import com.ssafy.homesage.domain.user.model.dto.*;
 import com.ssafy.homesage.domain.user.model.entity.User;
+import com.ssafy.homesage.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Slf4j
 @RequiredArgsConstructor
+@Service
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
 
     @Override
     public List<UserTestResponseDto> getAllUsers() {
@@ -26,5 +33,26 @@ public class UserServiceImpl implements UserService {
         }
 
         return allUserInfo;
+    }
+
+    @Override
+    @Transactional
+    public void changedPassword(String accessToken, UserChangedPwRequestDto userChangedPwRequestDto) {
+        // 토큰에서 사용자의 이메일 추출
+        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
+
+        // 사용자의 이메일을 통해 비밀번호 조회
+//        String findPassword = userMapper.findPasswordByEmail(userEmail);
+//
+//        // 조회한 비밀번호와 입력 된 비밀번호가 일치하지 않으면 예외 처리
+//        if(!findPassword.equals(userChangedPwRequestDto.password())) {
+//            throw new MismatchPasswordException();
+//        }
+
+        // 일치한다면 비밀번호 업데이트
+
+
+        // 로그아웃 처리
+
     }
 }

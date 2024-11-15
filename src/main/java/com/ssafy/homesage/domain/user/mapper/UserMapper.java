@@ -3,8 +3,8 @@ package com.ssafy.homesage.domain.user.mapper;
 import java.util.List;
 
 import com.ssafy.homesage.domain.user.model.dto.InterestedSalesResponse;
+import com.ssafy.homesage.domain.user.model.dto.ReserveRequestDto;
 import com.ssafy.homesage.domain.user.model.entity.User;
-import com.ssafy.homesage.domain.user.model.entity.UserInterestedSales;
 import org.apache.ibatis.annotations.*;
 
 @Mapper
@@ -82,4 +82,23 @@ public interface UserMapper {
         WHERE user_id = #{userId}
     """)
     List<InterestedSalesResponse> findAllUserInterestedSales(Long userId);
+
+    /**
+     * 중복 예약 조회
+     */
+    @Select("""
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE consumer_user_id = #{userId} AND provider_user_id = #{providerUserId} AND sale_id = #{saleId}
+    """)
+    int findReserveByUserIdAndProviderUserIdAndSaleId(Long userId, Long providerUserId, Long saleId);
+
+    /**
+     * 예약
+     */
+    @Insert("""
+        INSERT INTO reservations (consumer_user_id, provider_user_id, sale_id, reservation_datetime)
+        VALUES (#{consumerUserId}, #{providerUserId}, #{saleId}, #{reserveDateTime})
+    """)
+    void insertReservation(ReserveRequestDto reserveRequestDto);
 }

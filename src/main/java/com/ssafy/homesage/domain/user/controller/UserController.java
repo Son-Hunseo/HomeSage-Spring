@@ -86,9 +86,21 @@ public class UserController {
         return ResponseEntity.ok(interestedSalesResponseList);
     }
 
-    /**
-     * 예약
-     */
+    @Operation(summary = "예약하기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "예약 완료"),
+            @ApiResponse(responseCode = "500", description = "이미 예약되어있습니다.")
+    })
+    @PostMapping("/reserve")
+    public ResponseEntity<?> reservation(
+            HttpServletRequest request,
+            @RequestBody ReserveRequestDto reserveRequestDto) {
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        userService.reservation(accessToken, reserveRequestDto);
+        return ResponseEntity.ok().build();
+    }
 
     /**
      * 예약취소

@@ -1,5 +1,6 @@
 package com.ssafy.homesage.domain.user.service;
 
+import com.ssafy.homesage.domain.user.exception.DuplicateReservationException;
 import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
 import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
@@ -69,12 +70,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public Map<String, Boolean> interest(String accessToken, Long saleId) {
-        log.info("[UserService interest()] accessToken: {}", accessToken);
-        // 토큰에서 사용자의 이메일 추출
-        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
-
-        // 이메일을 통해 userId 조회
-        Long userId = userMapper.findIdByEmail(userEmail);
+        // userId 조회
+        Long userId = findUserId(accessToken);
 
         // saleId 와 사용자 이메일을 통해 찜목록에 데이터가 있는지 확인
         int count = userMapper.findInterestBySaleIdAndUserId(saleId, userId);
@@ -94,11 +91,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<InterestedSalesResponse> interestList(String accessToken) {
-        // 토큰에서 사용자의 이메일 추출
-        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
-
-        // 이메일을 통해 userId 조회
-        Long userId = userMapper.findIdByEmail(userEmail);
+        // userId 조회
+        Long userId = findUserId(accessToken);
 
         List<InterestedSalesResponse> interestedSalesResponseList =
                 userMapper.findAllUserInterestedSales(userId);
@@ -109,5 +103,39 @@ public class UserServiceImpl implements UserService {
         }
 
         return interestedSalesResponseList;
+    }
+
+    @Override
+    @Transactional
+    public void reservation(String accessToken, ReserveRequestDto reserveRequestDto) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 이미 있는 예약이면 예외처리 (같은 건물을 다른 시간대에 예약하려 하는 경우 등)
+        int count = userMapper.findReserveByUserIdAndProviderUserIdAndSaleId(
+                userId, reserveRequestDto.providerUserId(), reserveRequestDto.saleId());
+        if (count != 0) {
+            throw new DuplicateReservationException();
+        }
+
+        // 예약
+        ReserveRequestDto insertReserveRequestDto = ReserveRequestDto.builder()
+                .consumerUserId(userId)
+                .providerUserId(reserveRequestDto.providerUserId())
+                .saleId(reserveRequestDto.saleId())
+                .reserveDateTime(reserveRequestDto.reserveDate() + " " + reserveRequestDto.reserveTime())
+                .build();
+        userMapper.insertReservation(insertReserveRequestDto);
+    }
+
+    /**
+     * 토큰에서 사용자의 이메일을 추출 후 user_id 조회
+     */
+    private Long findUserId(String accessToken) {
+        // 토큰에서 사용자의 이메일 추출
+        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
+
+        // 이메일을 통해 userId 조회
+        return userMapper.findIdByEmail(userEmail);
     }
 }

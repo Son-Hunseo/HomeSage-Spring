@@ -14,4 +14,6 @@ public interface UserService {
     Map<String, Boolean> interest(String accessToken, Long saleId);
 
     List<InterestedSalesResponse> interestList(String accessToken);
+
+    void reservation(String accessToken, ReserveRequestDto reserveRequestDto);
 }

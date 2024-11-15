@@ -67,7 +67,6 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserLoginRequestDto userLoginRequestDto) {
-        log.info("server.ip : {}", serverIp);
         // AccessToken, RefreshToken 생성
         UserLoginResponseDto userLoginResponseDto = authService.login(userLoginRequestDto);
 

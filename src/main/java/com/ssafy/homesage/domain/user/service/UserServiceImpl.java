@@ -1,5 +1,6 @@
 package com.ssafy.homesage.domain.user.service;
 
+import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
 import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
@@ -13,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -52,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
         // 조회한 비밀번호와 입력 된 비밀번호가 일치하지 않으면 예외 처리
         String hashedPassword = hashUtil.getDigest(userChangedPwRequestDto.password());
-        if(!findPassword.equals(hashedPassword)) {
+        if (!findPassword.equals(hashedPassword)) {
             throw new MismatchPasswordException();
         }
 
@@ -61,5 +64,59 @@ public class UserServiceImpl implements UserService {
 
         // 로그아웃 처리
         authMapper.updateValidTokenToInvalidByUserEmail(userEmail);
+    }
+
+    @Override
+    @Transactional
+    public Map<String, Boolean> interest(String accessToken, Long saleId) {
+        log.info("[UserService interest()] accessToken: {}", accessToken);
+        // 토큰에서 사용자의 이메일 추출
+        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
+
+        // 이메일을 통해 userId 조회
+        Long userId = userMapper.findIdByEmail(userEmail);
+
+        // saleId 와 사용자 이메일을 통해 찜목록에 데이터가 있는지 확인
+        int count = userMapper.findInterestBySaleIdAndUserId(saleId, userId);
+
+        Map<String, Boolean> resultMap = new HashMap<>();
+        if (count == 0) {
+            // 없다면, 찜목록에 추가 후 map 에 true 를 담는다.
+            userMapper.insertInterest(saleId, userId);
+            resultMap.put("isInterest", true);
+        } else {
+            // 있다면, 찜목록에서 삭제 후 map 에 false 를 담는다.
+            userMapper.deleteInterest(saleId, userId);
+            resultMap.put("isInterest", false);
+        }
+        return resultMap;
+    }
+
+    @Override
+    public List<InterestedSalesResponse> interestList(String accessToken) {
+        // 토큰에서 사용자의 이메일 추출
+        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
+
+        // 이메일을 통해 userId 조회
+        Long userId = userMapper.findIdByEmail(userEmail);
+
+        List<InterestedSalesResponse> interestedSalesResponseList =
+                userMapper.findAllUserInterestedSales(userId)
+                        .stream()
+                        .map(sale -> new InterestedSalesResponse(
+                                        sale.getUserInterestedSaleId(),
+                                        sale.getSaleId(),
+                                        sale.getUserId(),
+                                        sale.getCreatedAt()
+                                )
+                        )
+                        .toList();
+
+        // 조회 후 빈 List 라면 예외 처리
+        if (interestedSalesResponseList.isEmpty()) {
+            throw new EmptyInterestedSalesException();
+        }
+
+        return interestedSalesResponseList;
     }
 }

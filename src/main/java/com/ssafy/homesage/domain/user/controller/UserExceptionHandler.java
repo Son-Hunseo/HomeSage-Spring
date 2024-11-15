@@ -1,6 +1,7 @@
 package com.ssafy.homesage.domain.user.controller;
 
 import com.ssafy.homesage.domain.user.exception.DuplicatedEmailException;
+import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
 import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
 import com.ssafy.homesage.domain.user.exception.UserNotFoundException;
 import com.ssafy.homesage.global.error.ErrorCode;
@@ -14,6 +15,10 @@ import java.util.InputMismatchException;
 
 @RestControllerAdvice(basePackages = {"com.ssafy.homesage.domain.user"})
 public class UserExceptionHandler {
+
+//    @Operation(summary = "공통 서버 오류")
+//    @ExceptionHandler(value = {RuntimeException.class})
+//    public ResponseEntity<?>
 
     @Operation(summary = "회원가입 시 이메일 중복")
     @ExceptionHandler(value = {DuplicatedEmailException.class})
@@ -38,6 +43,15 @@ public class UserExceptionHandler {
     public ResponseEntity<?> userNotFoundHandler(NullPointerException e) {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.USER_NOT_FOUND);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @Operation(summary = "찜목록이 없음")
+    @ExceptionHandler(value = {EmptyInterestedSalesException.class})
+    public ResponseEntity<?> emptyInterestedSales(NullPointerException e) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_INTERESTED);
 
         return ResponseEntity.badRequest().body(errorResponse);
     }

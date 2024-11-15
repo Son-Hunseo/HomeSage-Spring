@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
+	DUPLICATE_RESERVATION(HttpStatus.CONFLICT.value(), "이미 예약된 건물입니다."),
 	EMPTY_INTERESTED(HttpStatus.NO_CONTENT.value(), "찜목록이 비어있습니다."),
 	BAD_REQUEST(HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다."), // 기타 잘못된 요청 처리.
 	DUPLICATED_EMAIL(HttpStatus.CONFLICT.value(), "사용할 수 없는 이메일입니다."),

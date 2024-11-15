@@ -2,6 +2,7 @@ package com.ssafy.homesage.domain.user.mapper;
 
 import java.util.List;
 
+import com.ssafy.homesage.domain.user.model.dto.InterestedSalesResponse;
 import com.ssafy.homesage.domain.user.model.entity.User;
 import com.ssafy.homesage.domain.user.model.entity.UserInterestedSales;
 import org.apache.ibatis.annotations.*;
@@ -73,9 +74,12 @@ public interface UserMapper {
      * 찜 목록 조회
      */
     @Select("""
-        SELECT * 
-        FROM user_interested_sales
+        SELECT uis.user_interested_sale_id, uis.sale_id, uis.user_id, 
+        s.provider_user_id, s.sale_type, s.home_type, s.price, s.monthly_fee, 
+        s.management_fee, s.space, s.floor, s.near_station 
+        FROM user_interested_sales uis
+        LEFT JOIN sales s ON uis.sale_id = s.sale_id 
         WHERE user_id = #{userId}
     """)
-    List<UserInterestedSales> findAllUserInterestedSales(Long userId);
+    List<InterestedSalesResponse> findAllUserInterestedSales(Long userId);
 }

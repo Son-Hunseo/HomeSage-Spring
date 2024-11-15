@@ -18,7 +18,7 @@ public interface AuthMapper {
     @Insert("""
             INSERT INTO users (email, password, name, role) 
             VALUES (#{email}, #{password}, #{name}, #{role})
-            """)
+    """)
     void saveUser(UserSignUpRequestDto signUpRequestDto);
 
     /**
@@ -28,7 +28,7 @@ public interface AuthMapper {
             SELECT COUNT(*) 
             FROM users 
             WHERE email = #{email}
-            """)
+    """)
     int selectCountByEmail(String email);
 
     /**
@@ -38,19 +38,19 @@ public interface AuthMapper {
         SELECT email, password, name, role, created_at, updated_at 
         FROM users
         WHERE email=#{email} AND password=#{password}
-        """)
+    """)
     Optional<User> findByEmailAndPassword(UserLoginRequestDto loginRequestDto);
 
-        /**
-         * 로그인 시 발급한 토큰을 저장
-         */
-        @Insert("""
+    /**
+     * 로그인 시 발급한 토큰을 저장
+     */
+    @Insert("""
         INSERT INTO token_status 
         VALUES(#{userEmail}, #{hashedToken}, #{dateExpiration}, 1)
-        """)
-        void saveToken(@Param("userEmail") String userEmail,
-                       @Param("hashedToken") String hashedToken,
-                       @Param("dateExpiration") Date dateExpiration);
+    """)
+    void saveToken(@Param("userEmail") String userEmail,
+                   @Param("hashedToken") String hashedToken,
+                   @Param("dateExpiration") Date dateExpiration);
 
     /**
      * 로그아웃 시 활성화 상태인 토큰을 비활성화 처리
@@ -59,7 +59,7 @@ public interface AuthMapper {
             UPDATE token_status 
             SET valid = 0 
             WHERE user_email = #{userEmail} AND valid = 1
-            """)
+    """)
     int updateValidTokenToInvalidByUserEmail(String userEmail);
 
     /**
@@ -69,7 +69,7 @@ public interface AuthMapper {
             UPDATE token_status 
             SET valid = 0 
             WHERE user_email = #{userEmail} AND valid = 1 AND hashed_token != #{hashedRefreshToken}
-            """)
+    """)
     void updateValidTokenToInvalidByUserEmailAndRefreshToken(String userEmail, String hashedRefreshToken
     );
 
@@ -80,7 +80,7 @@ public interface AuthMapper {
         SELECT * 
         FROM users 
         WHERE email=#{email}
-        """)
+    """)
     Optional<User> findByEmail(String email);
 
     /**
@@ -90,6 +90,6 @@ public interface AuthMapper {
         SELECT COUNT(*) 
         FROM token_status 
         WHERE hashed_token = #{token} AND valid = 1
-        """)
+    """)
     boolean findValidStatusByToken(String token);
 }

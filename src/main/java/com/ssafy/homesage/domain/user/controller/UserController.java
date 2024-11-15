@@ -1,6 +1,7 @@
 package com.ssafy.homesage.domain.user.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import com.ssafy.homesage.domain.user.model.dto.*;
 import com.ssafy.homesage.domain.user.service.UserService;
@@ -29,7 +30,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // 일반 회원
     @Operation(summary = "회원 비밀번호 변경")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
@@ -41,19 +41,34 @@ public class UserController {
             @RequestBody UserChangedPwRequestDto userChangedPwRequestDto) {
         log.info("[UserController changedPassword()] password: {}, newPassword: {}",
                 userChangedPwRequestDto.password(), userChangedPwRequestDto.newPassword());
+
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
         userService.changedPassword(accessToken, userChangedPwRequestDto);
 
         return ResponseEntity.ok().build();
     }
-    /**
-     * 비밀번호 변경
-     */
 
-    /**
-     * 찜하기
-     */
+    @Operation(summary = "찜하기 / 찜취소")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "찜목록 추가"),
+            @ApiResponse(responseCode = "500", description = "찜목록 추가 실패")
+    })
+    @PutMapping("/interest/{saleId}")
+    public ResponseEntity<?> interest(
+            HttpServletRequest request,
+            @PathVariable Long saleId) {
+        log.info("[UserController interest()] saleId: {}", saleId);
+
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        // 찜목록 추가 및 삭제
+        Map<String, Boolean> result = userService.interest(accessToken, saleId);
+
+        return ResponseEntity.ok(result);
+    }
+
 
     /**
      * 찜 목록 조회

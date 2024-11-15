@@ -15,6 +15,10 @@ import java.util.InputMismatchException;
 @RestControllerAdvice(basePackages = {"com.ssafy.homesage.domain.user"})
 public class UserExceptionHandler {
 
+//    @Operation(summary = "공통 서버 오류")
+//    @ExceptionHandler(value = {RuntimeException.class})
+//    public ResponseEntity<?>
+
     @Operation(summary = "회원가입 시 이메일 중복")
     @ExceptionHandler(value = {DuplicatedEmailException.class})
     public ResponseEntity<?> duplicatedEmailHandler(RuntimeException e) {

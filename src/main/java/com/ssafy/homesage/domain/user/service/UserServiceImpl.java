@@ -101,16 +101,7 @@ public class UserServiceImpl implements UserService {
         Long userId = userMapper.findIdByEmail(userEmail);
 
         List<InterestedSalesResponse> interestedSalesResponseList =
-                userMapper.findAllUserInterestedSales(userId)
-                        .stream()
-                        .map(sale -> new InterestedSalesResponse(
-                                        sale.getUserInterestedSaleId(),
-                                        sale.getSaleId(),
-                                        sale.getUserId(),
-                                        sale.getCreatedAt()
-                                )
-                        )
-                        .toList();
+                userMapper.findAllUserInterestedSales(userId);
 
         // 조회 후 빈 List 라면 예외 처리
         if (interestedSalesResponseList.isEmpty()) {

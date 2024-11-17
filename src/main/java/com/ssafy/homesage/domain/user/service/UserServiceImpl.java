@@ -2,6 +2,7 @@ package com.ssafy.homesage.domain.user.service;
 
 import com.ssafy.homesage.domain.user.exception.DuplicateReservationException;
 import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
+import com.ssafy.homesage.domain.user.exception.EmptyReservesException;
 import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
@@ -90,19 +91,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<InterestedSalesResponse> interestList(String accessToken) {
+    public List<InterestedSalesResponseDto> interestList(String accessToken) {
         // userId 조회
         Long userId = findUserId(accessToken);
 
-        List<InterestedSalesResponse> interestedSalesResponseList =
+        List<InterestedSalesResponseDto> interestedSalesResponseDtoList =
                 userMapper.findAllUserInterestedSales(userId);
 
         // 조회 후 빈 List 라면 예외 처리
-        if (interestedSalesResponseList.isEmpty()) {
+        if (interestedSalesResponseDtoList.isEmpty()) {
             throw new EmptyInterestedSalesException();
         }
 
-        return interestedSalesResponseList;
+        return interestedSalesResponseDtoList;
     }
 
     @Override
@@ -127,6 +128,34 @@ public class UserServiceImpl implements UserService {
                 .build();
         userMapper.insertReservation(insertReserveRequestDto);
     }
+
+    @Override
+    @Transactional
+    public void cancelReserve(String accessToken, Long saleId) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 예약 취소
+        userMapper.deleteByUserIdAndSaleId(userId, saleId);
+    }
+
+    @Override
+    public List<ReserveResponseDto> reserveList(String accessToken) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 예약 목록 조회
+        List<ReserveResponseDto> reserveResponseDtoList =
+                userMapper.findAllReserveListByUserId(userId);
+
+        // 조회 후 빈 리스트면 예외 처리
+        if (reserveResponseDtoList.isEmpty()) {
+            throw new EmptyReservesException();
+        }
+
+        return reserveResponseDtoList;
+    }
+
 
     /**
      * 토큰에서 사용자의 이메일을 추출 후 user_id 조회

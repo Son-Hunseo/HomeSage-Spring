@@ -45,7 +45,7 @@ public class UserExceptionHandler {
     }
 
     @Operation(summary = "찜목록이 없음")
-    @ExceptionHandler(value = {EmptyInterestedSalesException.class})
+    @ExceptionHandler(value = {EmptyReservesException.class})
     public ResponseEntity<?> emptyInterestedSalesHandler(NullPointerException e) {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_INTERESTED);
@@ -58,6 +58,15 @@ public class UserExceptionHandler {
     public ResponseEntity<?> duplicateReservationHandler(RuntimeException e) {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.DUPLICATE_RESERVATION);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+    @Operation(summary = "예약목록이 없음")
+    @ExceptionHandler(value = {EmptyInterestedSalesException.class})
+    public ResponseEntity<?> emptyReservesHandler(NullPointerException e) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_RESERVES);
 
         return ResponseEntity.badRequest().body(errorResponse);
     }

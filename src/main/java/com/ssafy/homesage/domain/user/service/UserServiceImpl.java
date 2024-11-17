@@ -1,9 +1,6 @@
 package com.ssafy.homesage.domain.user.service;
 
-import com.ssafy.homesage.domain.user.exception.DuplicateReservationException;
-import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
-import com.ssafy.homesage.domain.user.exception.EmptyReservesException;
-import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
+import com.ssafy.homesage.domain.user.exception.*;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
 import com.ssafy.homesage.domain.user.model.dto.*;
@@ -156,6 +153,39 @@ public class UserServiceImpl implements UserService {
         return reserveResponseDtoList;
     }
 
+    @Override
+    public List<SalesResponseDto> providerSaleList(String accessToken) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 관리 중인 상품 목록 조회
+        List<SalesResponseDto> salesResponseDtoList =
+                userMapper.findAllSalesByProviderUserId(userId);
+
+        // 조회 후 빈 리스트면 예외 처리
+        if (salesResponseDtoList.isEmpty()) {
+            throw new EmptySalesException();
+        }
+
+        return salesResponseDtoList;
+    }
+
+    @Override
+    public List<ReserveResponseDto> providerReserveList(String accessToken) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 예약 된 상품 목록 조회
+        List<ReserveResponseDto> reserveResponseDtoList
+                = userMapper.findAllReserveListByProviderUserId(userId);
+
+        // 조회 후 빈 리스트면 예외 처리
+        if (reserveResponseDtoList.isEmpty()) {
+            throw new EmptyReservesException();
+        }
+
+        return reserveResponseDtoList;
+    }
 
     /**
      * 토큰에서 사용자의 이메일을 추출 후 user_id 조회

@@ -16,6 +16,7 @@ public record ReserveResponseDto(
         Integer monthlyFee,
         Integer managementFee,
         Double space,
+        String description,
         String floor,
         String nearStation
 ) {

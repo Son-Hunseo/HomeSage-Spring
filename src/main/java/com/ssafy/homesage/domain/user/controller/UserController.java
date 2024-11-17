@@ -138,13 +138,42 @@ public class UserController {
     }
 
     // 브로커 회원
-    /**
-     * 내 상품 목록
-     */
+    @Operation(summary = "내가 관리하는 상품목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
+            @ApiResponse(responseCode = "204", description = "관리 중인 목록이 없습니다.")
+    })
+    @GetMapping("/provider/saleList")
+    public ResponseEntity<?> saleList(
+            HttpServletRequest request) {
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        // 상품 목록 조회
+        List<SalesResponseDto> salesResponseDtoList =
+                userService.providerSaleList(accessToken);
+
+        return ResponseEntity.ok(salesResponseDtoList);
+    }
 
     /**
      * 예약 현황 조회
      */
+    @Operation(summary = "예약 된 상품목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "판매자 예약 목록 조회 성공"),
+            @ApiResponse(responseCode = "204", description = "예약 완료 된 목록이 없습니다.")
+    })
+    @GetMapping("/provider/reserveList")
+    public ResponseEntity<?> providerReserveList(
+            HttpServletRequest request) {
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
 
+        // 상품 목록 조회
+        List<ReserveResponseDto> reserveResponseDtoList =
+                userService.providerReserveList(accessToken);
 
+        return ResponseEntity.ok(reserveResponseDtoList);
+    }
 }

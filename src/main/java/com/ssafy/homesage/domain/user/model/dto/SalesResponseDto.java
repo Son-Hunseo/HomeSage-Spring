@@ -3,10 +3,8 @@ package com.ssafy.homesage.domain.user.model.dto;
 import lombok.Builder;
 
 @Builder
-public record InterestedSalesResponseDto(
-        Long UserInterestedSaleId,
+public record SalesResponseDto(
         Long saleId,
-        Long userId,
         Long providerUserId,
         String saleType,
         String homeType,

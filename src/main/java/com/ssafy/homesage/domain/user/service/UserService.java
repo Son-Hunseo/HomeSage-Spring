@@ -13,7 +13,11 @@ public interface UserService {
 
     Map<String, Boolean> interest(String accessToken, Long saleId);
 
-    List<InterestedSalesResponse> interestList(String accessToken);
+    List<InterestedSalesResponseDto> interestList(String accessToken);
 
     void reservation(String accessToken, ReserveRequestDto reserveRequestDto);
+
+    void cancelReserve(String accessToken, Long saleId);
+
+    List<ReserveResponseDto> reserveList(String accessToken);
 }

@@ -2,12 +2,14 @@ package com.ssafy.homesage.domain.user.model.dto;
 
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
-public record InterestedSalesResponse(
-        Long UserInterestedSaleId,
+public record ReserveResponseDto(
         Long saleId,
-        Long userId,
+        Long consumerUserId,
         Long providerUserId,
+        LocalDateTime reservationDatetime,
         String saleType,
         String homeType,
         Integer price,
@@ -15,5 +17,6 @@ public record InterestedSalesResponse(
         Integer managementFee,
         Double space,
         String floor,
-        String nearStation) {
+        String nearStation
+) {
 }

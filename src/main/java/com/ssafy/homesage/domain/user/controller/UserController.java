@@ -81,9 +81,9 @@ public class UserController {
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 찜목록 조회
-        List<InterestedSalesResponse> interestedSalesResponseList = userService.interestList(accessToken);
+        List<InterestedSalesResponseDto> interestedSalesResponseDtoList = userService.interestList(accessToken);
 
-        return ResponseEntity.ok(interestedSalesResponseList);
+        return ResponseEntity.ok(interestedSalesResponseDtoList);
     }
 
     @Operation(summary = "예약하기")
@@ -102,13 +102,40 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 예약취소
-     */
+    @Operation(summary = "예약취소")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "예약 취소 성공"),
+            @ApiResponse(responseCode = "500", description = "이미 취소 된 예약입니다.")
+    })
+    @DeleteMapping("/cancel/{saleId}")
+    public ResponseEntity<?> cancelReserve(
+            HttpServletRequest request,
+            @PathVariable Long saleId) {
+        log.info("[UserController cancelReserve()] saleId: {}", saleId);
 
-    /**
-     * 예약 목록 조회
-     */
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        userService.cancelReserve(accessToken, saleId);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "예약 목록 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "예약 목록 조회 성공"),
+            @ApiResponse(responseCode = "204", description = "예약 목록이 없습니다.")
+    })
+    @GetMapping("/reserveList")
+    public ResponseEntity<?> reserveList(
+            HttpServletRequest request) {
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        // 찜목록 조회
+        List<ReserveResponseDto> reserveResponseDtoList = userService.reserveList(accessToken);
+
+        return ResponseEntity.ok(reserveResponseDtoList);
+    }
 
     // 브로커 회원
     /**

@@ -20,4 +20,8 @@ public interface UserService {
     void cancelReserve(String accessToken, Long saleId);
 
     List<ReserveResponseDto> reserveList(String accessToken);
+
+    List<SalesResponseDto> providerSaleList(String accessToken);
+
+    List<ReserveResponseDto> providerReserveList(String accessToken);
 }

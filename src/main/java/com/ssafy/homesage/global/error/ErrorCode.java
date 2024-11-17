@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
+	EMPTY_SALES(HttpStatus.NO_CONTENT.value(), "관리 중인 상품이 없습니다."),
 	EMPTY_RESERVES(HttpStatus.NO_CONTENT.value(), "예약 목록이 없습니다."),
 	DUPLICATE_RESERVATION(HttpStatus.CONFLICT.value(), "이미 예약된 건물입니다."),
 	EMPTY_INTERESTED(HttpStatus.NO_CONTENT.value(), "찜목록이 비어있습니다."),

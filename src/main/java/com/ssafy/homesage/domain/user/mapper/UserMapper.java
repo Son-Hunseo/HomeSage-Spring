@@ -78,7 +78,8 @@ public interface UserMapper {
     @Select("""
         SELECT uis.user_interested_sale_id, uis.sale_id, uis.user_id, 
         s.provider_user_id, s.sale_type, s.home_type, s.price, s.monthly_fee, 
-        s.management_fee, s.space, s.description, s.floor, s.near_station 
+        s.management_fee, s.space, s.description, s.floor, s.near_station,
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
         FROM user_interested_sales uis
         LEFT JOIN sales s ON uis.sale_id = s.sale_id 
         WHERE user_id = #{userId}
@@ -119,7 +120,8 @@ public interface UserMapper {
     @Select("""
         SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
         s.sale_type, s.home_type, s.price, s.monthly_fee, 
-        s.management_fee, s.space, s.description, s.floor, s.near_station
+        s.management_fee, s.space, s.description, s.floor, s.near_station,
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
         FROM reservations r
         LEFT JOIN sales s ON r.sale_id = s.sale_id
         WHERE r.consumer_user_id = #{userId}
@@ -131,7 +133,7 @@ public interface UserMapper {
      */
     @Select("""
         SELECT sale_id, provider_user_id, sale_type, home_type, price, monthly_fee, management_fee, 
-        space, description, floor, near_station
+        space, description, floor, near_station, city, gu, dong, latitude, longitude, city_gu_dong
         FROM sales
         WHERE provider_user_id = #{userId}
     """)
@@ -143,7 +145,8 @@ public interface UserMapper {
     @Select("""
         SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
         s.sale_type, s.home_type, s.price, s.monthly_fee, 
-        s.management_fee, s.space, s.description, s.floor, s.near_station
+        s.management_fee, s.space, s.description, s.floor, s.near_station,
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
         FROM reservations r
         LEFT JOIN sales s ON r.sale_id = s.sale_id
         WHERE r.provider_user_id = #{userId}

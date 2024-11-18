@@ -75,7 +75,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "찜목록 반환"),
             @ApiResponse(responseCode = "204", description = "찜목록이 없습니다.")
     })
-    @GetMapping("/interestList")
+    @GetMapping("/interest/list")
     public ResponseEntity<?> interestList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
@@ -126,7 +126,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "예약 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "예약 목록이 없습니다.")
     })
-    @GetMapping("/reserveList")
+    @GetMapping("/reserve/list")
     public ResponseEntity<?> reserveList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
@@ -144,7 +144,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "관리 중인 목록이 없습니다.")
     })
-    @GetMapping("/provider/saleList")
+    @GetMapping("/provider/sale/list")
     public ResponseEntity<?> providerSaleList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
@@ -165,7 +165,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "판매자 예약 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "예약 완료 된 목록이 없습니다.")
     })
-    @GetMapping("/provider/reserveList")
+    @GetMapping("/provider/reserve/list")
     public ResponseEntity<?> providerReserveList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출

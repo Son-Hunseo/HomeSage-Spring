@@ -80,13 +80,4 @@ public class UserExceptionHandler {
 
         return ResponseEntity.badRequest().body(errorResponse);
     }
-
-    @Operation(summary = "검색 된 상품이 없음")
-    @ExceptionHandler(value = {EmptySalesException.class})
-    public ResponseEntity<?> emptySalesHandler(NullPointerException e) {
-
-        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_SALES);
-
-        return ResponseEntity.badRequest().body(errorResponse);
-    }
 }

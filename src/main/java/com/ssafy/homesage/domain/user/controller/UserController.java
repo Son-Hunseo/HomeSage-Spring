@@ -3,6 +3,7 @@ package com.ssafy.homesage.domain.user.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.user.model.dto.*;
 import com.ssafy.homesage.domain.user.service.UserService;
 import com.ssafy.homesage.global.util.HeaderUtil;
@@ -74,7 +75,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "찜목록 반환"),
             @ApiResponse(responseCode = "204", description = "찜목록이 없습니다.")
     })
-    @GetMapping("/interestList")
+    @GetMapping("/interest/list")
     public ResponseEntity<?> interestList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
@@ -125,7 +126,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "예약 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "예약 목록이 없습니다.")
     })
-    @GetMapping("/reserveList")
+    @GetMapping("/reserve/list")
     public ResponseEntity<?> reserveList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
@@ -143,17 +144,17 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "관리 중인 목록이 없습니다.")
     })
-    @GetMapping("/provider/saleList")
-    public ResponseEntity<?> saleList(
+    @GetMapping("/provider/sale/list")
+    public ResponseEntity<?> providerSaleList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 상품 목록 조회
-        List<SalesResponseDto> salesResponseDtoList =
+        List<SaleResponseDto> saleResponseDtoList =
                 userService.providerSaleList(accessToken);
 
-        return ResponseEntity.ok(salesResponseDtoList);
+        return ResponseEntity.ok(saleResponseDtoList);
     }
 
     /**
@@ -164,7 +165,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "판매자 예약 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "예약 완료 된 목록이 없습니다.")
     })
-    @GetMapping("/provider/reserveList")
+    @GetMapping("/provider/reserve/list")
     public ResponseEntity<?> providerReserveList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출

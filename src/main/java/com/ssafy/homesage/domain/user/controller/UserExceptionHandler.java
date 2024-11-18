@@ -1,5 +1,6 @@
 package com.ssafy.homesage.domain.user.controller;
 
+import com.ssafy.homesage.domain.sale.exception.EmptySalesException;
 import com.ssafy.homesage.domain.user.exception.*;
 import com.ssafy.homesage.global.error.ErrorCode;
 import com.ssafy.homesage.global.error.ErrorResponse;
@@ -72,10 +73,10 @@ public class UserExceptionHandler {
     }
 
     @Operation(summary = "관리 중인 상품이 없음")
-    @ExceptionHandler(value = {EmptySalesException.class})
-    public ResponseEntity<?> emptySalesHandler(NullPointerException e) {
+    @ExceptionHandler(value = {EmptyManageSalesException.class})
+    public ResponseEntity<?> emptyManageSalesHandler(NullPointerException e) {
 
-        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_SALES);
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_MANAGE_SALES);
 
         return ResponseEntity.badRequest().body(errorResponse);
     }

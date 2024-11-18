@@ -1,8 +1,7 @@
 package com.ssafy.homesage.domain.user.service;
 
-import com.ssafy.homesage.domain.user.exception.DuplicateReservationException;
-import com.ssafy.homesage.domain.user.exception.EmptyInterestedSalesException;
-import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
+import com.ssafy.homesage.domain.user.exception.*;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
 import com.ssafy.homesage.domain.user.model.dto.*;
@@ -90,19 +89,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<InterestedSalesResponse> interestList(String accessToken) {
+    public List<InterestedSalesResponseDto> interestList(String accessToken) {
         // userId 조회
         Long userId = findUserId(accessToken);
 
-        List<InterestedSalesResponse> interestedSalesResponseList =
+        List<InterestedSalesResponseDto> interestedSalesResponseDtoList =
                 userMapper.findAllUserInterestedSales(userId);
 
         // 조회 후 빈 List 라면 예외 처리
-        if (interestedSalesResponseList.isEmpty()) {
+        if (interestedSalesResponseDtoList.isEmpty()) {
             throw new EmptyInterestedSalesException();
         }
 
-        return interestedSalesResponseList;
+        return interestedSalesResponseDtoList;
     }
 
     @Override
@@ -126,6 +125,67 @@ public class UserServiceImpl implements UserService {
                 .reserveDateTime(reserveRequestDto.reserveDate() + " " + reserveRequestDto.reserveTime())
                 .build();
         userMapper.insertReservation(insertReserveRequestDto);
+    }
+
+    @Override
+    @Transactional
+    public void cancelReserve(String accessToken, Long saleId) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 예약 취소
+        userMapper.deleteByUserIdAndSaleId(userId, saleId);
+    }
+
+    @Override
+    public List<ReserveResponseDto> reserveList(String accessToken) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 예약 목록 조회
+        List<ReserveResponseDto> reserveResponseDtoList =
+                userMapper.findAllReserveListByUserId(userId);
+
+        // 조회 후 빈 리스트면 예외 처리
+        if (reserveResponseDtoList.isEmpty()) {
+            throw new EmptyReservesException();
+        }
+
+        return reserveResponseDtoList;
+    }
+
+    @Override
+    public List<SaleResponseDto> providerSaleList(String accessToken) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 관리 중인 상품 목록 조회
+        List<SaleResponseDto> saleResponseDtoList =
+                userMapper.findAllSalesByProviderUserId(userId);
+
+        // 조회 후 빈 리스트면 예외 처리
+        if (saleResponseDtoList.isEmpty()) {
+            throw new EmptyManageSalesException();
+        }
+
+        return saleResponseDtoList;
+    }
+
+    @Override
+    public List<ReserveResponseDto> providerReserveList(String accessToken) {
+        // userId 조회
+        Long userId = findUserId(accessToken);
+
+        // 예약 된 상품 목록 조회
+        List<ReserveResponseDto> reserveResponseDtoList
+                = userMapper.findAllReserveListByProviderUserId(userId);
+
+        // 조회 후 빈 리스트면 예외 처리
+        if (reserveResponseDtoList.isEmpty()) {
+            throw new EmptyReservesException();
+        }
+
+        return reserveResponseDtoList;
     }
 
     /**

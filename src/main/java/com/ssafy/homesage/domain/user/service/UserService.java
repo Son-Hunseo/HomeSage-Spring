@@ -1,5 +1,6 @@
 package com.ssafy.homesage.domain.user.service;
 
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.user.model.dto.*;
 
 import java.util.List;
@@ -13,7 +14,15 @@ public interface UserService {
 
     Map<String, Boolean> interest(String accessToken, Long saleId);
 
-    List<InterestedSalesResponse> interestList(String accessToken);
+    List<InterestedSalesResponseDto> interestList(String accessToken);
 
     void reservation(String accessToken, ReserveRequestDto reserveRequestDto);
+
+    void cancelReserve(String accessToken, Long saleId);
+
+    List<ReserveResponseDto> reserveList(String accessToken);
+
+    List<SaleResponseDto> providerSaleList(String accessToken);
+
+    List<ReserveResponseDto> providerReserveList(String accessToken);
 }

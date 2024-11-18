@@ -2,8 +2,10 @@ package com.ssafy.homesage.domain.user.mapper;
 
 import java.util.List;
 
-import com.ssafy.homesage.domain.user.model.dto.InterestedSalesResponse;
+import com.ssafy.homesage.domain.user.model.dto.InterestedSalesResponseDto;
 import com.ssafy.homesage.domain.user.model.dto.ReserveRequestDto;
+import com.ssafy.homesage.domain.user.model.dto.ReserveResponseDto;
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.user.model.entity.User;
 import org.apache.ibatis.annotations.*;
 
@@ -76,12 +78,13 @@ public interface UserMapper {
     @Select("""
         SELECT uis.user_interested_sale_id, uis.sale_id, uis.user_id, 
         s.provider_user_id, s.sale_type, s.home_type, s.price, s.monthly_fee, 
-        s.management_fee, s.space, s.floor, s.near_station 
+        s.management_fee, s.space, s.description, s.floor, s.near_station,
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
         FROM user_interested_sales uis
         LEFT JOIN sales s ON uis.sale_id = s.sale_id 
         WHERE user_id = #{userId}
     """)
-    List<InterestedSalesResponse> findAllUserInterestedSales(Long userId);
+    List<InterestedSalesResponseDto> findAllUserInterestedSales(Long userId);
 
     /**
      * 중복 예약 조회
@@ -101,4 +104,52 @@ public interface UserMapper {
         VALUES (#{consumerUserId}, #{providerUserId}, #{saleId}, #{reserveDateTime})
     """)
     void insertReservation(ReserveRequestDto reserveRequestDto);
+
+    /**
+     * 예약 취소
+     */
+    @Delete("""
+        DELETE FROM reservations
+        WHERE consumer_user_id = #{userId} AND sale_id = #{saleId}
+    """)
+    void deleteByUserIdAndSaleId(Long userId, Long saleId);
+
+    /**
+     * 소비자의 예약 목록 조회
+     */
+    @Select("""
+        SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
+        s.sale_type, s.home_type, s.price, s.monthly_fee, 
+        s.management_fee, s.space, s.description, s.floor, s.near_station,
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
+        FROM reservations r
+        LEFT JOIN sales s ON r.sale_id = s.sale_id
+        WHERE r.consumer_user_id = #{userId}
+    """)
+    List<ReserveResponseDto> findAllReserveListByUserId(Long userId);
+
+    /**
+     * 관리자의 자신이 관리 중인 상품 조회
+     */
+    @Select("""
+        SELECT sale_id, provider_user_id, sale_type, home_type, price, monthly_fee, management_fee, 
+        space, description, floor, near_station, city, gu, dong, latitude, longitude, city_gu_dong
+        FROM sales
+        WHERE provider_user_id = #{userId}
+    """)
+    List<SaleResponseDto> findAllSalesByProviderUserId(Long userId);
+
+    /**
+     * 판매자의 예약 목록 조회
+     */
+    @Select("""
+        SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
+        s.sale_type, s.home_type, s.price, s.monthly_fee, 
+        s.management_fee, s.space, s.description, s.floor, s.near_station,
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
+        FROM reservations r
+        LEFT JOIN sales s ON r.sale_id = s.sale_id
+        WHERE r.provider_user_id = #{userId}
+    """)
+    List<ReserveResponseDto> findAllReserveListByProviderUserId(Long userId);
 }

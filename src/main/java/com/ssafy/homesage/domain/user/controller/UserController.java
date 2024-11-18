@@ -3,6 +3,7 @@ package com.ssafy.homesage.domain.user.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.user.model.dto.*;
 import com.ssafy.homesage.domain.user.service.UserService;
 import com.ssafy.homesage.global.util.HeaderUtil;
@@ -144,16 +145,16 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "관리 중인 목록이 없습니다.")
     })
     @GetMapping("/provider/saleList")
-    public ResponseEntity<?> saleList(
+    public ResponseEntity<?> providerSaleList(
             HttpServletRequest request) {
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 상품 목록 조회
-        List<SalesResponseDto> salesResponseDtoList =
+        List<SaleResponseDto> saleResponseDtoList =
                 userService.providerSaleList(accessToken);
 
-        return ResponseEntity.ok(salesResponseDtoList);
+        return ResponseEntity.ok(saleResponseDtoList);
     }
 
     /**

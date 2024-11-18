@@ -1,5 +1,6 @@
 package com.ssafy.homesage.domain.user.service;
 
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.user.exception.*;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
 import com.ssafy.homesage.domain.user.mapper.UserMapper;
@@ -154,20 +155,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<SalesResponseDto> providerSaleList(String accessToken) {
+    public List<SaleResponseDto> providerSaleList(String accessToken) {
         // userId 조회
         Long userId = findUserId(accessToken);
 
         // 관리 중인 상품 목록 조회
-        List<SalesResponseDto> salesResponseDtoList =
+        List<SaleResponseDto> saleResponseDtoList =
                 userMapper.findAllSalesByProviderUserId(userId);
 
         // 조회 후 빈 리스트면 예외 처리
-        if (salesResponseDtoList.isEmpty()) {
-            throw new EmptySalesException();
+        if (saleResponseDtoList.isEmpty()) {
+            throw new EmptyManageSalesException();
         }
 
-        return salesResponseDtoList;
+        return saleResponseDtoList;
     }
 
     @Override

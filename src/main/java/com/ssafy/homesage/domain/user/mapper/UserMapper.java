@@ -1,12 +1,11 @@
 package com.ssafy.homesage.domain.user.mapper;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.ssafy.homesage.domain.user.model.dto.InterestedSalesResponseDto;
 import com.ssafy.homesage.domain.user.model.dto.ReserveRequestDto;
 import com.ssafy.homesage.domain.user.model.dto.ReserveResponseDto;
-import com.ssafy.homesage.domain.user.model.dto.SalesResponseDto;
+import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.user.model.entity.User;
 import org.apache.ibatis.annotations.*;
 
@@ -131,12 +130,12 @@ public interface UserMapper {
      * 관리자의 자신이 관리 중인 상품 조회
      */
     @Select("""
-        SELECT sale_id, provider_user_id, sale_type, home_type, price, monthly_fee, management_fee,
+        SELECT sale_id, provider_user_id, sale_type, home_type, price, monthly_fee, management_fee, 
         space, description, floor, near_station
         FROM sales
         WHERE provider_user_id = #{userId}
     """)
-    List<SalesResponseDto> findAllSalesByProviderUserId(Long userId);
+    List<SaleResponseDto> findAllSalesByProviderUserId(Long userId);
 
     /**
      * 판매자의 예약 목록 조회

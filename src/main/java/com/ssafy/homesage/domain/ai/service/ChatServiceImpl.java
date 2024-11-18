@@ -124,7 +124,7 @@ public class ChatServiceImpl implements ChatService{
 
         String userMessage = chatRequestDto.message();
         // 마지막 메시지 + 1이 현재 메시지의 seq
-        int userMessageSeq = chatHistory.get(4).getMessageSeq() + 1;
+        int userMessageSeq = chatHistory.get(chatHistory.size() - 1).getMessageSeq() + 1;
 
         // 요청 유저 메시지를 DB에 저장
         chatMapper.insertUserMessage(userMessage, userMessageSeq, chatRoomId);

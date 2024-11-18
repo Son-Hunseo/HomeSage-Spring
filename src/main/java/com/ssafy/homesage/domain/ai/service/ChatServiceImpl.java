@@ -1,19 +1,20 @@
 package com.ssafy.homesage.domain.ai.service;
 
 import com.ssafy.homesage.domain.ai.mapper.ChatMapper;
-import com.ssafy.homesage.domain.ai.model.dto.ChatListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.ChatMessageListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.CreateChatRoomResponseDto;
-import com.ssafy.homesage.domain.ai.model.entity.AIMessage;
+import com.ssafy.homesage.domain.ai.model.dto.*;
+import com.ssafy.homesage.domain.ai.model.entity.Message;
 import com.ssafy.homesage.domain.ai.model.entity.ChatRoom;
-import com.ssafy.homesage.domain.ai.model.entity.HumanMessage;
 import com.ssafy.homesage.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -23,6 +24,14 @@ public class ChatServiceImpl implements ChatService{
 
     private final JwtUtil jwtUtil;
     private final ChatMapper chatMapper;
+
+    private final WebClient webClient = WebClient.builder().build();
+
+    @Value("${server.ip}")
+    private String serverIp;
+
+    @Value("${ai.port}")
+    private String aiPort;
 
     @Override
     public ChatListResponseDto getChatList(String accessToken) {
@@ -87,10 +96,10 @@ public class ChatServiceImpl implements ChatService{
     public ChatMessageListResponseDto getChatMessageList(int chatRoomId) {
 
         // AI 메시지 가져오기
-        List<AIMessage> aiMessageList = chatMapper.getAIMessageList(chatRoomId);
+        List<Message> aiMessageList = chatMapper.getAIMessageList(chatRoomId);
 
         // HUMAN 메시지 가져오기
-        List<HumanMessage> humanMessageList = chatMapper.getHumanMessageList(chatRoomId);
+        List<Message> humanMessageList = chatMapper.getHumanMessageList(chatRoomId);
 
         return ChatMessageListResponseDto
                 .builder()
@@ -104,5 +113,53 @@ public class ChatServiceImpl implements ChatService{
     public void deleteChatRoom(int chatRoomId) {
         chatMapper.deleteChatMessageList(chatRoomId); // 외래키 걸려서 자식 레코드 먼저 삭제
         chatMapper.deleteChatRoom(chatRoomId);
+    }
+
+    @Override
+    @Transactional
+    public CompletableFuture<AIServerChatResponseDto> getAIResponse(ChatRequestDto chatRequestDto, int chatRoomId) {
+
+        // 최근 5개의 메시지를 history로 만듬
+        List<Message> chatHistory = chatMapper.getChatHistory(chatRoomId);
+
+        String userMessage = chatRequestDto.message();
+        // 마지막 메시지 + 1이 현재 메시지의 seq
+        int userMessageSeq = chatHistory.get(4).getMessageSeq() + 1;
+
+        // 요청 유저 메시지를 DB에 저장
+        chatMapper.insertUserMessage(userMessage, userMessageSeq, chatRoomId);
+
+        AIServerChatRequestDto aiServerChatRequestDto = new AIServerChatRequestDto(chatHistory, userMessage);
+
+        // FastAPI로 요청 보내기
+        String url = new StringBuilder()
+                .append("http://")
+                .append(serverIp)
+//                .append("localhost")
+                .append(":")
+                .append(aiPort)
+                .append("/chat")
+                .toString();
+
+        Mono<AIServerChatResponseDto> aiResponseMono = webClient.post()
+                .uri(url)
+                .bodyValue(aiServerChatRequestDto)
+                .retrieve()
+                .bodyToMono(AIServerChatResponseDto.class)
+                .map(response -> {
+                    String message = response.message();
+                    int messageSeq = userMessageSeq + 1;
+                    return AIServerChatResponseDto.builder()
+                            .message(message)
+                            .messageSeq(messageSeq)
+                            .build();
+                });
+
+        // 응답 받은 AI 메시지를 DB에 저장 (seq = 유저 메시지의 seq + 1)
+        aiResponseMono.subscribe(aiResponse -> chatMapper.insertAIMessage(
+                aiResponse.message(), userMessageSeq + 1, chatRoomId));
+
+        // 반환
+        return aiResponseMono.toFuture();
     }
 }

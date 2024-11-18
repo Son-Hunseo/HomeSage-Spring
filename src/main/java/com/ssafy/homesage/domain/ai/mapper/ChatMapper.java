@@ -2,9 +2,8 @@ package com.ssafy.homesage.domain.ai.mapper;
 
 import java.util.List;
 
-import com.ssafy.homesage.domain.ai.model.entity.AIMessage;
+import com.ssafy.homesage.domain.ai.model.entity.Message;
 import com.ssafy.homesage.domain.ai.model.entity.ChatRoom;
-import com.ssafy.homesage.domain.ai.model.entity.HumanMessage;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -91,7 +90,7 @@ public interface ChatMapper {
         WHERE chat_room_id = #{chatRoomId} 
             AND type = "AI"
     """)
-    List<AIMessage> getAIMessageList(int chatRoomId);
+    List<Message> getAIMessageList(int chatRoomId);
 
     /**
      * 채팅방의 id에 해당하는 Human Message 반환
@@ -102,7 +101,7 @@ public interface ChatMapper {
         WHERE chat_room_id = #{chatRoomId} 
             AND type = "HUMAN"
     """)
-    List<HumanMessage> getHumanMessageList(int chatRoomId);
+    List<Message> getHumanMessageList(int chatRoomId);
 
     @Delete("""
         DELETE 
@@ -117,4 +116,27 @@ public interface ChatMapper {
         WHERE chat_room_id = #{chatRoomId}
     """)
     void deleteChatRoom(int chatRoomId);
+
+    @Select("""
+        SELECT type, message, message_seq
+        FROM (SELECT type, message, message_seq
+              FROM chat_message AS a
+              WHERE a.chat_room_id = #{chatRoomId}
+              ORDER BY a.message_seq DESC
+              LIMIT 5) AS b
+        ORDER BY b.message_seq ASC
+    """)
+    List<Message> getChatHistory(int chatRoomId);
+
+    @Insert("""
+        INSERT INTO chat_message (chat_room_id, type, message, message_seq)
+        VALUES (#{chatRoomId}, "HUMAN", #{message}, #{messageSeq});
+    """)
+    void insertUserMessage(String message, int messageSeq, int chatRoomId);
+
+    @Insert("""
+        INSERT INTO chat_message (chat_room_id, type, message, message_seq)
+        VALUES (#{chatRoomId}, "AI", #{message}, #{messageSeq});
+    """)
+    void insertAIMessage(String message, int messageSeq, int chatRoomId);
 }

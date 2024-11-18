@@ -1,9 +1,9 @@
 package com.ssafy.homesage.domain.ai.service;
 
-import com.ssafy.homesage.domain.ai.model.dto.ChatListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.ChatMessageListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.CreateChatRoomResponseDto;
+import com.ssafy.homesage.domain.ai.model.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface ChatService {
 
@@ -16,4 +16,6 @@ public interface ChatService {
     public ChatMessageListResponseDto getChatMessageList(int chatRoomId);
 
     public void deleteChatRoom(int chatRoomId);
+
+    public CompletableFuture<AIServerChatResponseDto> getAIResponse(ChatRequestDto chatRequestDto, int chatRoomId);
 }

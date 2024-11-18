@@ -6,11 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
 @Builder
-public class AIMessage extends BaseMessage {
-
-    private MessageType type = MessageType.AI;
+@AllArgsConstructor
+public class Message {
+    private MessageType type;
     private String message;
     private int messageSeq;
 }

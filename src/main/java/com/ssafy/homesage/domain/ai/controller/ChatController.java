@@ -1,9 +1,8 @@
 package com.ssafy.homesage.domain.ai.controller;
 
-import com.ssafy.homesage.domain.ai.model.dto.ChatListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.ChatMessageListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.ChatRequestDto;
-import com.ssafy.homesage.domain.ai.model.dto.CreateChatRoomResponseDto;
+import com.ssafy.homesage.domain.ai.model.dto.*;
+import com.ssafy.homesage.domain.ai.model.entity.Message;
+import com.ssafy.homesage.domain.ai.model.enums.MessageType;
 import com.ssafy.homesage.domain.ai.service.ChatService;
 import com.ssafy.homesage.global.util.HeaderUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+
+import static com.ssafy.homesage.domain.ai.model.enums.MessageType.AI;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -111,7 +115,7 @@ public class ChatController {
     public ResponseEntity<?> getAIResponse(
             @PathVariable("chat_room_id") int chatRoomId,
             HttpServletRequest request,
-            ChatRequestDto chatRequestDto) {
+            @RequestBody ChatRequestDto chatRequestDto) throws ExecutionException, InterruptedException {
 
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
@@ -121,9 +125,18 @@ public class ChatController {
 
         if (canAccess) {
             // 정상적인 AI 챗봇 응답 요청 로직
+            CompletableFuture<AIServerChatResponseDto> aiResponse = chatService.getAIResponse(chatRequestDto, chatRoomId);
 
+            CompletableFuture<ChatResponseDto> chatResponseDto = aiResponse.thenApply(response -> {
+                Message aiMessage = Message.builder()
+                        .type(AI)
+                        .message(response.message())
+                        .messageSeq(response.messageSeq())
+                        .build();
+                return new ChatResponseDto(aiMessage.getType(), aiMessage.getMessage(), aiMessage.getMessageSeq());
+            });
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body(chatResponseDto.get());
         }
 
         // 권한 없음 오류 반환

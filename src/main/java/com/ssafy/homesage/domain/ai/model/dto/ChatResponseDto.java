@@ -1,8 +1,8 @@
 package com.ssafy.homesage.domain.ai.model.dto;
 
-import com.ssafy.homesage.domain.ai.model.entity.AIMessage;
+import com.ssafy.homesage.domain.ai.model.enums.MessageType;
 import lombok.Builder;
 
 @Builder
-public record ChatResponseDto(AIMessage aiMessage) {
+public record ChatResponseDto(MessageType type, String message, int messageSeq) {
 }

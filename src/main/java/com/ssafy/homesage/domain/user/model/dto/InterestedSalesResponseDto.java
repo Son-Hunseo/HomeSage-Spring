@@ -16,5 +16,12 @@ public record InterestedSalesResponseDto(
         Double space,
         String description,
         String floor,
-        String nearStation) {
+        String nearStation,
+        String city,
+        String gu,
+        String dong,
+        Double latitude,
+        Double longitude,
+        String cityGuDong
+) {
 }

@@ -1,9 +1,9 @@
-package com.ssafy.homesage.domain.user.model.dto;
+package com.ssafy.homesage.domain.sale.model.dto;
 
 import lombok.Builder;
 
 @Builder
-public record SalesResponseDto(
+public record SaleResponseDto(
         Long saleId,
         Long providerUserId,
         String saleType,
@@ -14,5 +14,12 @@ public record SalesResponseDto(
         Double space,
         String description,
         String floor,
-        String nearStation) {
+        String nearStation,
+        String city,
+        String gu,
+        String dong,
+        Double latitude,
+        Double longitude,
+        String cityGuDong
+        ) {
 }

@@ -29,7 +29,7 @@ public class JwtUtil {
 		this.hashUtil = hashUtil;
 	}
 
-	private final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 15; // 15분
+	private final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 60 * 60; // 60분
 	private final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 4; // 4시간
 
 	@Value("${jwt.secretkey.accesstoken}")

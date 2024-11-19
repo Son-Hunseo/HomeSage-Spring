@@ -42,7 +42,7 @@ public class AnalyzeController {
             return ResponseEntity.badRequest().build();
         }
 
-        String uploadDir = "/app/image/registered";
+        String uploadDir = "/app/image/registered/";
 
         // 디렉토리가 없으면 생성
         File dir = new File(uploadDir);

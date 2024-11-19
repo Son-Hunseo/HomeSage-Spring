@@ -49,6 +49,7 @@ jobs:
             -e JWT_REFRESH_TOKEN_KEY=${{ secrets.JWT_REFRESH_TOKEN_KEY }} \
             -e SERVER_IP=${{ secrets.SERVER_IP }} \
             -e AI_SERVER_PORT=${{ secrets.AI_SERVER_PORT }} \
+            -e STATIC_PORT=${{ secrets.STATIC_PORT }} \
             -p 8080:8080 \
             ${{ env.SERVER_DOCKER_IMG_NAME }}:latest
           EOF

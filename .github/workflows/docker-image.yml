@@ -41,6 +41,7 @@ jobs:
           sleep 30
           docker build -t ${{ env.SERVER_DOCKER_IMG_NAME }}:latest -f Dockerfile .
           docker run -d --name ${{ env.SERVER_DOCKER_IMG_NAME }} \
+            -v /volume1/docker/nginx_static_server/static:/app/image \
             -e SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }} \
             -e SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \

@@ -61,7 +61,7 @@ public interface ChatMapper {
      * 채팅방의 id에 해당하는 채팅방이 있는지의 여부 반환
      */
     @Select("""
-        SELECT *
+        SELECT COUNT(chat_room_id)
         FROM chat_room
         WHERE chat_room_id = #{chatRoomId}
     """)

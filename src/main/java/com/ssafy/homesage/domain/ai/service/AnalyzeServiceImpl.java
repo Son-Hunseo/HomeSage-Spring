@@ -213,7 +213,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         // 분석 결과 요청
         AIServerLedgerAnalyzeRequestDto aiServerLedgerAnalyzeRequestDto = AIServerLedgerAnalyzeRequestDto
                 .builder()
-                .ledge_text(ledgerOcrResult)
+                .ledger_text(ledgerOcrResult)
                 .build();
 
         // FastAPI로 요청 보내기

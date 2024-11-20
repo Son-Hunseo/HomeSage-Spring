@@ -50,6 +50,8 @@ jobs:
             -e SERVER_IP=${{ secrets.SERVER_IP }} \
             -e AI_SERVER_PORT=${{ secrets.AI_SERVER_PORT }} \
             -e STATIC_PORT=${{ secrets.STATIC_PORT }} \
+            -e OCR_URL=${{ secrets.OCR_URL }} \
+            -e X_OCR_SECRET=${{ secrets.X_OCR_SECRET }}
             -p 8080:8080 \
             ${{ env.SERVER_DOCKER_IMG_NAME }}:latest
           EOF

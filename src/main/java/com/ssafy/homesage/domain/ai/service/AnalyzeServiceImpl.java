@@ -138,6 +138,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     @Override
     @Transactional
     public void saveLedgerUrl(int analyzedId, String fileName) {
+
         String url = new StringBuilder()
                 .append("http://")
                 .append(serverIp)

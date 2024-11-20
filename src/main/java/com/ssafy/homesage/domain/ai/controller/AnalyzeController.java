@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -146,12 +147,13 @@ public class AnalyzeController {
 
             try {
                 String originalFilename = file.getOriginalFilename();
-                Path path = Paths.get(uploadDir + originalFilename);
+                String uniqueFileName = UUID.randomUUID() + "_" + originalFilename;
+                Path path = Paths.get(uploadDir + uniqueFileName);
 
                 Files.write(path, file.getBytes());
 
                 // db에 url 저장
-                analyzeService.saveRegisteredUrl(analyzeId, originalFilename);
+                analyzeService.saveRegisteredUrl(analyzeId, uniqueFileName);
 
                 return ResponseEntity.ok().build();
             } catch (IOException e) {
@@ -195,12 +197,13 @@ public class AnalyzeController {
 
             try {
                 String originalFilename = file.getOriginalFilename();
-                Path path = Paths.get(uploadDir + originalFilename);
+                String uniqueFileName = UUID.randomUUID() + "_" + originalFilename;
+                Path path = Paths.get(uploadDir + uniqueFileName);
 
                 Files.write(path, file.getBytes());
 
                 // db에 url 저장
-                analyzeService.saveLedgerUrl(analyzeId, originalFilename);
+                analyzeService.saveLedgerUrl(analyzeId, uniqueFileName);
 
                 return ResponseEntity.ok().build();
             } catch (IOException e) {

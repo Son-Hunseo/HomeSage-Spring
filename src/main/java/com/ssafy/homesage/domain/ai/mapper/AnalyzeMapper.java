@@ -29,7 +29,7 @@ public interface AnalyzeMapper {
      * 이메일로 새로운 분석 방 생성
      */
     @Insert("""
-        INSERT INTO analyzes (user_id, registered_img_url, ledger_img_url, result_text)
+        INSERT INTO analyzes (user_id, registered_img_url, ledger_img_url, registered_result_text, ledger_result_text)
         VALUES
         (   
             (
@@ -37,6 +37,7 @@ public interface AnalyzeMapper {
                 FROM users
                 WHERE email = #{userEmail}
             ),
+            '',
             '',
             '',
             ''
@@ -80,7 +81,7 @@ public interface AnalyzeMapper {
      * 분석방의 id에 해당하는 분석 Info 반환
      */
     @Select("""
-        SELECT registered_img_url, ledger_img_url, result_text
+        SELECT registered_img_url, ledger_img_url, registered_result_text, ledger_result_text
         FROM analyzes
         WHERE analyze_id = #{analyzeId};
     """)

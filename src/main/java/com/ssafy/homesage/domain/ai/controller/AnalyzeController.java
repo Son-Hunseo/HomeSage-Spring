@@ -217,10 +217,10 @@ public class AnalyzeController {
     }
 
     /**
-     * 분석 결과 받기
+     * 등기부 등본 분석 결과 받기
      */
-    @PostMapping("/{analyze_id}")
-    public ResponseEntity<?> getAnalyzeResult(
+    @GetMapping("/{analyze_id}/registered")
+    public ResponseEntity<?> getRegisteredAnalyzeResult(
             @PathVariable("analyze_id") int analyzeId,
             HttpServletRequest request) throws ExecutionException, InterruptedException {
 
@@ -232,7 +232,32 @@ public class AnalyzeController {
 
         if (canAccess) {
             // 정상 로직 수행
-            CompletableFuture<AnalyzeResultResponseDto> analyzeResultResponseDto = analyzeService.getAnalyzeResult(analyzeId);
+            CompletableFuture<AnalyzeResultResponseDto> analyzeResultResponseDto = analyzeService.getRegisteredAnalyzeResult(analyzeId);
+
+            return ResponseEntity.ok().body(analyzeResultResponseDto.get());
+        }
+
+        // 권한 없음 오류 반환
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    /**
+     * 건축물 대장 분석 결과 받기
+     */
+    @GetMapping("/{analyze_id}/ledger")
+    public ResponseEntity<?> getLedgerAnalyzeResult(
+            @PathVariable("analyze_id") int analyzeId,
+            HttpServletRequest request) throws ExecutionException, InterruptedException {
+
+        // Http Header 의 Authorization (Access Token) 추출
+        String accessToken = HeaderUtil.getAccessToken(request);
+
+        // email로 해당 유저가 이 분석 방에 접근이 가능한지 여부를 반환
+        boolean canAccess = analyzeService.checkCanAccessChatRoom(accessToken, analyzeId);
+
+        if (canAccess) {
+            // 정상 로직 수행
+            CompletableFuture<AnalyzeResultResponseDto> analyzeResultResponseDto = analyzeService.getLedgerAnalyzeResult(analyzeId);
 
             return ResponseEntity.ok().body(analyzeResultResponseDto.get());
         }

@@ -153,27 +153,20 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     @Override
     @Transactional
-    public CompletableFuture<AnalyzeResultResponseDto> getAnalyzeResult(int analyzedId) {
+    public CompletableFuture<AnalyzeResultResponseDto> getRegisteredAnalyzeResult(int analyzedId) {
 
         String baseOcrUrl = ocrUrl;
 
         // 등기부 등본 url 가져오기
         String registeredUrl = analyzeMapper.getRegisteredUrl(analyzedId);
 
-        // 건축물 대장 url 가져오기
-        String ledgerUrl = analyzeMapper.getLedgerUrl(analyzedId);
-
         // 등기부 등본 ocr 결과 (파싱 이후)
         String registeredOcrResult = getOcrResult(baseOcrUrl, registeredUrl, xOcrSecret);
 
-        // 건축물 대장 ocr 결과 (파싱 이후)
-        String ledgerOcrResult = getOcrResult(baseOcrUrl, ledgerUrl, xOcrSecret);
-
         // 분석 결과 요청
-        AIServerAnalyzeRequestDto aiServerAnalyzeRequestDto = AIServerAnalyzeRequestDto
+        AIServerRegisteredAnalyzeRequestDto aiServerRegisteredAnalyzeRequestDto = AIServerRegisteredAnalyzeRequestDto
                 .builder()
                 .registered_text(registeredOcrResult)
-                .ledger_text(ledgerOcrResult)
                 .build();
 
         // FastAPI로 요청 보내기
@@ -182,14 +175,14 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 .append(serverIp)
                 .append(":")
                 .append(aiPort)
-                .append("/analyze")
+                .append("/analyze/registered")
                 .toString();
 
         Mono<AnalyzeResultResponseDto> aiResponseMono = webClient.post()
                 .uri(url)
-                .bodyValue(aiServerAnalyzeRequestDto)
+                .bodyValue(aiServerRegisteredAnalyzeRequestDto)
                 .retrieve()
-                .bodyToMono(AIServerAnalyzeResponseDto.class)
+                .bodyToMono(AIServerRegisteredAnalyzeResponseDto.class)
                 .map(response -> {
                     String result = response.result();
                     return AnalyzeResultResponseDto
@@ -199,7 +192,54 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 });
 
         // 응답 받은 분석 결과를 DB에 저장
-        aiResponseMono.subscribe(aiResponse -> analyzeMapper.insertAnalyzeResult(
+        aiResponseMono.subscribe(aiResponse -> analyzeMapper.insertRegisteredAnalyzeResult(
+                aiResponse.result(), analyzedId));
+
+        return aiResponseMono.toFuture();
+    }
+
+    @Override
+    @Transactional
+    public CompletableFuture<AnalyzeResultResponseDto> getLedgerAnalyzeResult(int analyzedId) {
+
+        String baseOcrUrl = ocrUrl;
+
+        // 건축물 대장 url 가져오기
+        String ledgerUrl = analyzeMapper.getLedgerUrl(analyzedId);
+
+        // 건축물 대장 ocr 결과 (파싱 이후)
+        String ledgerOcrResult = getOcrResult(baseOcrUrl, ledgerUrl, xOcrSecret);
+
+        // 분석 결과 요청
+        AIServerLedgerAnalyzeRequestDto aiServerLedgerAnalyzeRequestDto = AIServerLedgerAnalyzeRequestDto
+                .builder()
+                .ledge_text(ledgerOcrResult)
+                .build();
+
+        // FastAPI로 요청 보내기
+        String url = new StringBuilder()
+                .append("http://")
+                .append(serverIp)
+                .append(":")
+                .append(aiPort)
+                .append("/analyze/ledger")
+                .toString();
+
+        Mono<AnalyzeResultResponseDto> aiResponseMono = webClient.post()
+                .uri(url)
+                .bodyValue(aiServerLedgerAnalyzeRequestDto)
+                .retrieve()
+                .bodyToMono(AIServerLedgerAnalyzeResponseDto.class)
+                .map(response -> {
+                    String result = response.result();
+                    return AnalyzeResultResponseDto
+                            .builder()
+                            .result(result)
+                            .build();
+                });
+
+        // 응답 받은 분석 결과를 DB에 저장
+        aiResponseMono.subscribe(aiResponse -> analyzeMapper.insertLedgerAnalyzeResult(
                 aiResponse.result(), analyzedId));
 
         return aiResponseMono.toFuture();

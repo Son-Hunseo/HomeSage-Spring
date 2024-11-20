@@ -23,5 +23,7 @@ public interface AnalyzeService {
 
     public void saveLedgerUrl(int analyzedId, String fileName);
 
-    public CompletableFuture<AnalyzeResultResponseDto> getAnalyzeResult(int analyzedId);
+    public CompletableFuture<AnalyzeResultResponseDto> getRegisteredAnalyzeResult(int analyzedId);
+
+    public CompletableFuture<AnalyzeResultResponseDto> getLedgerAnalyzeResult(int analyzedId);
 }

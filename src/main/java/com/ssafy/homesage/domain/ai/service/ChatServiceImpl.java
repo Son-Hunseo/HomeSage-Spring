@@ -135,7 +135,6 @@ public class ChatServiceImpl implements ChatService{
         String url = new StringBuilder()
                 .append("http://")
                 .append(serverIp)
-//                .append("localhost")
                 .append(":")
                 .append(aiPort)
                 .append("/chat")

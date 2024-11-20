@@ -107,4 +107,26 @@ public interface AnalyzeMapper {
     """)
     void saveLedgerUrl(int analyzedId, String url);
 
+
+    @Select("""
+        SELECT registered_img_url
+        FROM analyzes
+        WHERE analyze_id = #{analyzedId};
+    """)
+    String getRegisteredUrl(int analyzedId);
+
+    @Select("""
+        SELECT ledger_img_url
+        FROM analyzes
+        WHERE analyze_id = #{analyzedId};
+    """)
+    String getLedgerUrl(int analyzedId);
+
+    @Update("""
+        UPDATE analyzes
+        SET result_text = #{result}
+        WHERE analyze_id = #{analyzedId};
+    """)
+    void insertAnalyzeResult(String result, int analyzedId);
+
 }

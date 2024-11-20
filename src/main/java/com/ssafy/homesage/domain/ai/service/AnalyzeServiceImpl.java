@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.json.JSONArray;
@@ -124,16 +123,13 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     @Transactional
     public void saveRegisteredUrl(int analyzedId, String fileName) {
 
-        // UUID를 생성하여 fileName에 사용
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-
         String url = new StringBuilder()
                         .append("http://")
                         .append(serverIp)
                         .append(":")
                         .append(staticPort)
                         .append("/static/registered/")
-                        .append(uniqueFileName)
+                        .append(fileName)
                         .toString();
 
         analyzeMapper.saveRegisteredUrl(analyzedId, url);
@@ -143,16 +139,13 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     @Transactional
     public void saveLedgerUrl(int analyzedId, String fileName) {
 
-        // UUID를 생성하여 fileName에 사용
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
-
         String url = new StringBuilder()
                 .append("http://")
                 .append(serverIp)
                 .append(":")
                 .append(staticPort)
                 .append("/static/ledger/")
-                .append(uniqueFileName)
+                .append(fileName)
                 .toString();
 
         analyzeMapper.saveLedgerUrl(analyzedId, url);

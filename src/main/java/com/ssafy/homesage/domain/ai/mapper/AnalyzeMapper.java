@@ -124,9 +124,16 @@ public interface AnalyzeMapper {
 
     @Update("""
         UPDATE analyzes
-        SET result_text = #{result}
+        SET registered_result_text = #{result}
         WHERE analyze_id = #{analyzedId};
     """)
-    void insertAnalyzeResult(String result, int analyzedId);
+    void insertRegisteredAnalyzeResult(String result, int analyzedId);
+
+    @Update("""
+        UPDATE analyzes
+        SET ledger_result_text = #{result}
+        WHERE analyze_id = #{analyzedId};
+    """)
+    void insertLedgerAnalyzeResult(String result, int analyzedId);
 
 }

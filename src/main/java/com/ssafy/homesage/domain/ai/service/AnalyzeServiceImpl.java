@@ -62,7 +62,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 .analyzeList(analyzeRoomList)
                 .build();
 
-        return null;
+        return analyzeListResponseDto;
     }
 
     @Override

@@ -4,5 +4,5 @@ import lombok.Builder;
 
 // FastAPI 서버로 보내기위해 snake_case
 @Builder
-public record AIServerLedgerAnalyzeRequestDto(String ledge_text) {
+public record AIServerLedgerAnalyzeRequestDto(String ledger_text) {
 }

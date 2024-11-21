@@ -13,6 +13,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+
+    @Value("${server.ip}")
+    private String serverIp;
 
     // 모든 유저 반환
     @GetMapping
@@ -40,14 +46,30 @@ public class UserController {
     public ResponseEntity<?> changedPassword(
             HttpServletRequest request,
             @RequestBody UserChangedPwRequestDto userChangedPwRequestDto) {
-        log.info("[UserController changedPassword()] password: {}, newPassword: {}",
-                userChangedPwRequestDto.password(), userChangedPwRequestDto.newPassword());
+        log.info("[UserController changedPassword()] currentPassword: {}, newPassword: {}, confirmPassword: {}",
+                userChangedPwRequestDto.currentPassword(),
+                userChangedPwRequestDto.newPassword(),
+                userChangedPwRequestDto.confirmPassword());
 
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
         userService.changedPassword(accessToken, userChangedPwRequestDto);
 
-        return ResponseEntity.ok().build();
+        // RefreshToken 삭제
+        HttpHeaders httpHeaders = new HttpHeaders();
+        ResponseCookie responseCookie = ResponseCookie
+                .from(HeaderUtil.getRefreshCookieName(), "")
+                .domain(serverIp)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .sameSite("None")
+                .build();
+
+        return ResponseEntity.noContent()
+                .headers(httpHeaders).header(HttpHeaders.SET_COOKIE, responseCookie.toString())
+                .build();
     }
 
     @Operation(summary = "찜하기 / 찜취소")

@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         log.info("[UserService changedPassword()] findPassword: {}", findPassword);
 
         // 조회한 비밀번호와 입력 된 비밀번호가 일치하지 않으면 예외 처리
-        String hashedPassword = hashUtil.getDigest(userChangedPwRequestDto.password());
+        String hashedPassword = hashUtil.getDigest(userChangedPwRequestDto.currentPassword());
         if (!findPassword.equals(hashedPassword)) {
             throw new MismatchPasswordException();
         }

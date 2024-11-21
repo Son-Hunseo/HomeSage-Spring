@@ -51,6 +51,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public void checkEmail(String email) {
+        log.info("[AuthService checkEmail()] email: {}", email);
         // 이메일 양식이 아니거나, 이미 존재하는 이메일인 경우 예외 발생.
         if(!FormatUtil.isValidEmail(email) || authMapper.selectCountByEmail(email) != 0) {
             throw new DuplicatedEmailException();
@@ -60,6 +61,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public UserLoginResponseDto login(UserLoginRequestDto userLoginRequestDto) {
+        log.info("[AuthService login()] email: {}, password: {}",
+                userLoginRequestDto.email(), userLoginRequestDto.password());
         // 비밀번호를 암호화 한 Dto 새로 생성
         UserLoginRequestDto loginRequestDto = UserLoginRequestDto.builder()
                 .email(userLoginRequestDto.email())
@@ -94,7 +97,11 @@ public class AuthServiceImpl implements AuthService {
         log.info("[AuthService logout()] userEmail: {}", userEmail);
 
         // 사용자의 활성화 된 토큰을 모두 비활성화 처리
-        return authMapper.updateValidTokenToInvalidByUserEmail(userEmail);
+        int result = authMapper.updateValidTokenToInvalidByUserEmail(userEmail);
+        if (result == 0) {
+            throw new UserNotFoundException();
+        }
+        return result;
     }
 
     @Override
@@ -102,6 +109,7 @@ public class AuthServiceImpl implements AuthService {
     public Token reGenerateToken(String refreshToken) {
         // refreshToken 에서 사용자 이메일 추출
         String userEmail = jwtUtil.getUserEmail(refreshToken, "RefreshToken");
+        log.info("[AuthService reGenerateToken()] userEmail: {}", userEmail);
 
         // refreshToken 을 제외한 기존 발급 토큰 모두 비활성화 처리
         authMapper.updateValidTokenToInvalidByUserEmailAndRefreshToken(
@@ -120,6 +128,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean isValidToken(String token) {
+        log.info("[AuthService isValidToken()] token: {}", token);
         token = hashUtil.getDigest(token);
         return authMapper.findValidStatusByToken(token);
     }

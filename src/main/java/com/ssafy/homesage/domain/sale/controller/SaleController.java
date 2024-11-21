@@ -23,14 +23,26 @@ public class SaleController {
 
     private final SaleService saleService;
 
+    @GetMapping("/map-search")
+    public ResponseEntity<?> mapSaleList(
+            @RequestParam Double centerLat,
+            @RequestParam Double centerLng,
+            @RequestParam(defaultValue = "1") Double radius
+    ) {
+        // 지도 기반 매물 검색 로직
+        List<SaleResponseDto> saleResponseDtoList =
+                saleService.searchSaleListByMapCenter(centerLat, centerLng, radius);
+
+        return ResponseEntity.ok().body(saleResponseDtoList);
+    }
+
     @Operation(summary = "매물 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
             @ApiResponse(responseCode = "204", description = "상품 목록이 없습니다.")
     })
     @GetMapping("/list")
-    public ResponseEntity<?> saleList(
-            @RequestBody SaleSearchCondition searchConditionDto) {
+    public ResponseEntity<?> saleList(SaleSearchCondition searchConditionDto) {
 
         List<SaleResponseDto> saleResponseDtoList =
                 saleService.searchSaleList(searchConditionDto);

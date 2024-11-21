@@ -9,4 +9,6 @@ public interface SaleService {
     List<SaleResponseDto> searchSaleList(SaleSearchCondition searchConditionDto);
 
     SaleResponseDto saleDetail(Long saleId);
+
+    List<SaleResponseDto> searchSaleListByMapCenter(Double centerLat, Double centerLng, Double radius);
 }

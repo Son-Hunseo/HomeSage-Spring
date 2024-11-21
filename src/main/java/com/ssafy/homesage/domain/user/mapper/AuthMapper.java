@@ -77,7 +77,7 @@ public interface AuthMapper {
      * 토큰 내 userEmail 을 통해 사용자 조회
      */
     @Select("""
-        SELECT * 
+        SELECT email, password, name, role
         FROM users 
         WHERE email=#{email}
     """)

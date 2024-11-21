@@ -10,4 +10,5 @@ import lombok.Getter;
 @Builder
 public class ChatRoom extends BaseEntity {
     private int chatRoomId;
+    private String chatRoomName;
 }

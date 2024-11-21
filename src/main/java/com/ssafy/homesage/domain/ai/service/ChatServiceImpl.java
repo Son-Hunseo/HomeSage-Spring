@@ -52,13 +52,13 @@ public class ChatServiceImpl implements ChatService{
 
     @Override
     @Transactional // readOnly = false 가 디폴트
-    public CreateChatRoomResponseDto createChatRoom(String accessToken) {
+    public CreateChatRoomResponseDto createChatRoom(String accessToken, CreateChatRoomRequestDto createChatRoomRequestDto) {
 
         // 토큰에서 사용자의 이메일 추출
         String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
 
         // 사용자의 이메일을 통해 새로운 채팅방을 생성
-        chatMapper.createChatRoom(userEmail);
+        chatMapper.createChatRoom(userEmail, createChatRoomRequestDto.chatRoomName());
 
         // 해당 채팅방의 id 가져오기 (하나의 트랜잭션이기 때문에 같은 세션 보장됨)
         int newChatRoomId = chatMapper.getLastInsertedId();
@@ -66,6 +66,7 @@ public class ChatServiceImpl implements ChatService{
         CreateChatRoomResponseDto createChatRoomResponseDto = CreateChatRoomResponseDto
                 .builder()
                 .chatRoomId(newChatRoomId)
+                .chatRoomName(createChatRoomRequestDto.chatRoomName())
                 .build();
 
         // 디폴트 메시지 넣기

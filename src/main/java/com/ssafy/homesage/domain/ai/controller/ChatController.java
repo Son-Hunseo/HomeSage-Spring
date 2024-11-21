@@ -46,13 +46,15 @@ public class ChatController {
      * 새로운 채팅방 만들기
      */
     @PostMapping
-    public ResponseEntity<?> createChatRoom(HttpServletRequest request) {
+    public ResponseEntity<?> createChatRoom(
+            HttpServletRequest request,
+            CreateChatRoomRequestDto createChatRoomRequestDto) {
 
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 해당 유저의 email로 새로운 채팅방을 생성하고, 생성한 채팅방의 id 반환
-        CreateChatRoomResponseDto createChatRoomResponseDto = chatService.createChatRoom(accessToken);
+        CreateChatRoomResponseDto createChatRoomResponseDto = chatService.createChatRoom(accessToken, createChatRoomRequestDto);
 
         return ResponseEntity.ok(createChatRoomResponseDto);
     }

@@ -29,16 +29,18 @@ public interface ChatMapper {
     List<ChatRoom> getChatList(String userEmail);
 
     /**
-     * 이메일로 새로운 채팅방 생성하고,
-     * 해당 세션의 마지막 insert된 id 가져옴 (해당 세션이기 때문에 다른 insert 안겹침)
+     * 이메일로 새로운 채팅방 생성
      */
     @Insert("""
-        INSERT INTO chat_room (user_id)
-        SELECT user_id
-        FROM users
-        WHERE email = #{userEmail}
+        INSERT INTO chat_room (user_id, chat_room_name)
+        VALUES (
+                   (SELECT user_id
+                   FROM users
+                   WHERE email = #{userEmail}),
+                   #{chatRoomName}
+               )
     """)
-    void createChatRoom(String userEmail);
+    void createChatRoom(String userEmail, String chatRoomName);
 
     /**
      * 마지막으로 삽입된 요소의 id 반환

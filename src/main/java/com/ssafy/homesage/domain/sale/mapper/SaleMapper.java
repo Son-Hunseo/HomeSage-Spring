@@ -25,4 +25,6 @@ public interface SaleMapper {
         WHERE sale_id = #{saleId}
     """)
     Optional<SaleResponseDto> findById(Long saleId);
+
+    List<SaleResponseDto> findPropertiesWithinRadius(Double centerLat, Double centerLng, Double radius);
 }

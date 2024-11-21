@@ -20,7 +20,19 @@ public class SaleServiceImpl implements SaleService {
     private final SaleMapper saleMapper;
 
     @Override
+    public List<SaleResponseDto> searchSaleListByMapCenter(
+            Double centerLat,
+            Double centerLng,
+            Double radius
+    ) {
+        // 지도 기반 매물 검색 로직
+        // Haversine 공식 등을 활용한 반경 검색
+        return saleMapper.findPropertiesWithinRadius(centerLat, centerLng, radius);
+    }
+
+    @Override
     public List<SaleResponseDto> searchSaleList(SaleSearchCondition searchCondition) {
+        log.info("[SaleService searchSaleList()] searchCondition: {}", searchCondition);
         // 조회 전 Dto 처리
         initSearchCondition(searchCondition);
 
@@ -43,11 +55,22 @@ public class SaleServiceImpl implements SaleService {
     }
 
     private void initSearchCondition(SaleSearchCondition searchCondition) {
-        // keyword 가 null 이라면 default: 서울시 강남구 역삼동으로 설정
-        if (searchCondition.getKeyword() == null || searchCondition.getKeyword().trim().isEmpty()) {
+        // 모든 필드가 null인지 확인
+        boolean isAllNull = (searchCondition.getKeyword() == null || searchCondition.getKeyword().trim().isEmpty())
+                        && (searchCondition.getSaleType() == null || searchCondition.getSaleType().trim().isEmpty())
+                        && (searchCondition.getHomeType() == null || searchCondition.getHomeType().trim().isEmpty())
+                        && (searchCondition.getStation() == null || searchCondition.getStation().trim().isEmpty())
+                        && searchCondition.getMinPrice() == null
+                        && searchCondition.getMaxPrice() == null
+                        && searchCondition.getMinMonthlyFee() == null
+                        && searchCondition.getMaxMonthlyFee() == null
+                        && searchCondition.getMinSpace() == null
+                        && searchCondition.getMaxSpace() == null;
+
+        // 모든 값이 null일 경우 keyword를 "강남"으로 설정
+        if (isAllNull) {
             searchCondition.setKeyword("강남");
-        } else {
-            searchCondition.setKeyword(searchCondition.getKeyword().trim());
         }
     }
+
 }

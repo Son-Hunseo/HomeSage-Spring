@@ -59,7 +59,7 @@ public class SaleSqlProvider {
 
             // 역 필터링
             if (searchCondition.getStation() != null && !searchCondition.getStation().trim().isEmpty()) {
-                WHERE("near_station = #{station}");
+                WHERE("near_station LIKE CONCAT('%', #{station}, '%')");
             }
         }}.toString();
     }

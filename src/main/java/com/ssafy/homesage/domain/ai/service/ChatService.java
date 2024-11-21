@@ -9,7 +9,7 @@ public interface ChatService {
 
     public ChatListResponseDto getChatList(String accessToken);
 
-    public CreateChatRoomResponseDto createChatRoom(String accessToken);
+    public CreateChatRoomResponseDto createChatRoom(String accessToken, CreateChatRoomRequestDto createChatRoomRequestDto);
 
     public boolean checkCanAccessChatRoom(String accessToken, int chatRoomId);
 

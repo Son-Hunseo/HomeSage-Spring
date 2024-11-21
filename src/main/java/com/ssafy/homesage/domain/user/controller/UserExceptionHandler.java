@@ -18,6 +18,15 @@ public class UserExceptionHandler {
 //    @ExceptionHandler(value = {RuntimeException.class})
 //    public ResponseEntity<?>
 
+    @Operation(summary = "RefreshToken 정보가 없음")
+    @ExceptionHandler(value = {EmptyTokenException.class})
+    public ResponseEntity<?> emptyTokenHandler(NullPointerException e) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.USER_NOT_FOUND);
+
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
     @Operation(summary = "회원가입 시 이메일 중복")
     @ExceptionHandler(value = {DuplicatedEmailException.class})
     public ResponseEntity<?> duplicatedEmailHandler(RuntimeException e) {

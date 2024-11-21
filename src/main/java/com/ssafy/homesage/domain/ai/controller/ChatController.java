@@ -48,7 +48,7 @@ public class ChatController {
     @PostMapping
     public ResponseEntity<?> createChatRoom(
             HttpServletRequest request,
-            CreateChatRoomRequestDto createChatRoomRequestDto) {
+            @RequestBody CreateChatRoomRequestDto createChatRoomRequestDto) {
 
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);

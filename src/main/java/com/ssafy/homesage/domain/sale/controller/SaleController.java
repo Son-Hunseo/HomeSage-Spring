@@ -6,6 +6,7 @@ import com.ssafy.homesage.domain.sale.service.SaleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@RestController
 @RequiredArgsConstructor
+@Tag(name = "상품 컨트롤러", description = "상품 조회, 상세 조회")
+@RestController
 @RequestMapping("/sales")
 public class SaleController {
 

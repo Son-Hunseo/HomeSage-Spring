@@ -10,6 +10,7 @@ import com.ssafy.homesage.global.util.HeaderUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
-@RestController
 @RequiredArgsConstructor
+@Tag(name = "회원 기능 컨트롤러", description = "마이페이지, 찜, 예약")
+@RestController
 @RequestMapping("/user")
 public class UserController {
 

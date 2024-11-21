@@ -28,8 +28,9 @@ import reactor.core.publisher.Mono;
 @Transactional(readOnly = true)
 public class AnalyzeServiceImpl implements AnalyzeService {
 
-    @Value("${server.ip}")
-    private String serverIp;
+//    @Value("${server.ip}")
+//    private String serverIp;
+    private String serverIp = "121.88.240.38";
 
     @Value("${static.port}")
     private String staticPort;

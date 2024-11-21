@@ -27,8 +27,9 @@ public class ChatServiceImpl implements ChatService{
 
     private final WebClient webClient = WebClient.builder().build();
 
-    @Value("${server.ip}")
-    private String serverIp;
+//    @Value("${server.ip}")
+//    private String serverIp;
+    private String serverIp = "121.88.240.38";
 
     @Value("${ai.port}")
     private String aiPort;

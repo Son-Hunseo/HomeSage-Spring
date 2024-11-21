@@ -17,6 +17,7 @@ public interface ChatMapper {
      */
     @Select("""
         SELECT chat_room_id,
+               chat_room_name,
                created_at,
                updated_at
         FROM chat_room

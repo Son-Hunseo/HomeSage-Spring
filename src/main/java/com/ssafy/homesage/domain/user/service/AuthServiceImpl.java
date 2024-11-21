@@ -1,6 +1,7 @@
 package com.ssafy.homesage.domain.user.service;
 
 import com.ssafy.homesage.domain.user.exception.DuplicatedEmailException;
+import com.ssafy.homesage.domain.user.exception.EmptyTokenException;
 import com.ssafy.homesage.domain.user.exception.MismatchPasswordException;
 import com.ssafy.homesage.domain.user.exception.UserNotFoundException;
 import com.ssafy.homesage.domain.user.mapper.AuthMapper;
@@ -107,6 +108,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public Token reGenerateToken(String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new EmptyTokenException();
+        }
+
         // refreshToken 에서 사용자 이메일 추출
         String userEmail = jwtUtil.getUserEmail(refreshToken, "RefreshToken");
         log.info("[AuthService reGenerateToken()] userEmail: {}", userEmail);

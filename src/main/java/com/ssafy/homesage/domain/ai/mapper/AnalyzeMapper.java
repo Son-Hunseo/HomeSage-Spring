@@ -14,6 +14,7 @@ public interface AnalyzeMapper {
      */
     @Select("""
         SELECT analyze_id,
+               analyze_name,
                created_at,
                updated_at
         FROM analyzes
@@ -29,7 +30,7 @@ public interface AnalyzeMapper {
      * 이메일로 새로운 분석 방 생성
      */
     @Insert("""
-        INSERT INTO analyzes (user_id, registered_img_url, ledger_img_url, registered_result_text, ledger_result_text)
+        INSERT INTO analyzes (user_id, analyze_name, registered_img_url, ledger_img_url, registered_result_text, ledger_result_text)
         VALUES
         (   
             (
@@ -37,13 +38,14 @@ public interface AnalyzeMapper {
                 FROM users
                 WHERE email = #{userEmail}
             ),
+            #{analyzeName},
             '',
             '',
             '',
             ''
         )
     """)
-    void createAnalyze(String userEmail);
+    void createAnalyze(String userEmail, String analyzeName);
 
     /**
      * 마지막으로 삽입된 요소의 id 반환

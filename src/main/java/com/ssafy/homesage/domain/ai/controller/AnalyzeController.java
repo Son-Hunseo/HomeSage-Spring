@@ -1,9 +1,6 @@
 package com.ssafy.homesage.domain.ai.controller;
 
-import com.ssafy.homesage.domain.ai.model.dto.AnalyzeInfoResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.AnalyzeListResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.AnalyzeResultResponseDto;
-import com.ssafy.homesage.domain.ai.model.dto.CreateAnalyzeResponseDto;
+import com.ssafy.homesage.domain.ai.model.dto.*;
 import com.ssafy.homesage.domain.ai.service.AnalyzeService;
 import com.ssafy.homesage.global.util.HeaderUtil;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,13 +50,15 @@ public class AnalyzeController {
      * 새로운 분석 방 생성
      */
     @PostMapping
-    public ResponseEntity<?> createAnalyze(HttpServletRequest request) {
+    public ResponseEntity<?> createAnalyze(
+            HttpServletRequest request,
+            @RequestBody CreateAnalyzeRequestDto createAnalyzeRequestDto) {
 
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
 
         // 해당 유저의 email로 새로운 분석 방을 생성하고, 생성한 분석 방의 id 반환
-        CreateAnalyzeResponseDto createAnalyzeResponseDto = analyzeService.createAnalyze(accessToken);
+        CreateAnalyzeResponseDto createAnalyzeResponseDto = analyzeService.createAnalyze(accessToken, createAnalyzeRequestDto);
 
         return ResponseEntity.ok(createAnalyzeResponseDto);
     }

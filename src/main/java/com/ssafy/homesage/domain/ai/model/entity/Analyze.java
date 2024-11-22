@@ -10,4 +10,5 @@ import lombok.Getter;
 @Builder
 public class Analyze extends BaseEntity {
     private int analyzeId;
+    private String analyzeName;
 }

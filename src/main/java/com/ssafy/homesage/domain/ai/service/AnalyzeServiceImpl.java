@@ -67,13 +67,15 @@ public class AnalyzeServiceImpl implements AnalyzeService {
 
     @Override
     @Transactional
-    public CreateAnalyzeResponseDto createAnalyze(String accessToken) {
+    public CreateAnalyzeResponseDto createAnalyze(
+            String accessToken,
+            CreateAnalyzeRequestDto createAnalyzeRequestDto) {
 
         // 토큰에서 사용자의 이메일 추출
         String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
 
         // 사용자의 이메일을 통해 새로운 분석 방을 생성
-        analyzeMapper.createAnalyze(userEmail);
+        analyzeMapper.createAnalyze(userEmail, createAnalyzeRequestDto.analyzeName());
 
         // 해당 분석 방의 id 가져오기 (하나의 트랜잭션이기 때문에 같은 세션 보장됨)
         int newAnalyzeId = analyzeMapper.getLastInsertedId();
@@ -81,6 +83,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
         CreateAnalyzeResponseDto createAnalyzeResponseDto = CreateAnalyzeResponseDto
                 .builder()
                 .analyzeId(newAnalyzeId)
+                .analyzeName(createAnalyzeRequestDto.analyzeName())
                 .build();
 
         return createAnalyzeResponseDto;

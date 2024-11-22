@@ -62,13 +62,13 @@ public class JwtFilter extends OncePerRequestFilter {
         // 반드시 응답으로 200 OK가 전송되어야 한다.
         if(httpServletRequest.getMethod().equals("OPTIONS")) {
             httpServletResponse.setHeader("Access-Control-Allow-Credentials", "true");
-            httpServletResponse.setHeader("Access-Control-Allow-Headers", "content-type, authorization");
+            // 대소문자 주의할 것
+            httpServletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+            httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
             httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://" + serverIp + ":5173");
             httpServletResponse.setStatus(HttpStatus.OK.value());
-
             return;
         }
-
 
         // Refresh 요청이 발생한 경우.
         if(httpServletRequest.getRequestURI().contains("/auth/refresh")) {

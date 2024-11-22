@@ -20,17 +20,6 @@ public class SaleServiceImpl implements SaleService {
     private final SaleMapper saleMapper;
 
     @Override
-    public List<SaleResponseDto> searchSaleListByMapCenter(
-            Double centerLat,
-            Double centerLng,
-            Double radius
-    ) {
-        // 지도 기반 매물 검색 로직
-        // Haversine 공식 등을 활용한 반경 검색
-        return saleMapper.findPropertiesWithinRadius(centerLat, centerLng, radius);
-    }
-
-    @Override
     public List<SaleResponseDto> searchSaleList(SaleSearchCondition searchCondition) {
         log.info("[SaleService searchSaleList()] searchCondition: {}", searchCondition);
         // 조회 전 Dto 처리
@@ -45,6 +34,25 @@ public class SaleServiceImpl implements SaleService {
         }
 
         return saleResponseDtoList;
+    }
+
+    @Override
+    public List<SaleResponseDto> searchSaleListByMapCenter(
+            Double centerLat,
+            Double centerLng,
+            Double radius
+    ) {
+        // 위도/경도 유효성 검사 추가
+        if (centerLat < -90 || centerLat > 90 || centerLng < -180 || centerLng > 180) {
+            throw new IllegalArgumentException("Invalid latitude or longitude values");
+        }
+
+        // radius는 km 단위로 받아서 처리
+        if (radius <= 0) {
+            throw new IllegalArgumentException("Radius must be greater than 0");
+        }
+
+        return saleMapper.findSalesWithinRadius(centerLat, centerLng, radius);
     }
 
     @Override

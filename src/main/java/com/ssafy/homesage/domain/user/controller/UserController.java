@@ -29,6 +29,9 @@ public class UserController {
 
     private final UserService userService;
 
+    @Value("${back.server.domain}")
+    private String backServerDomain;
+
     // 모든 유저 반환
     @GetMapping
     private ResponseEntity<?> getFirstUser() {
@@ -58,7 +61,7 @@ public class UserController {
         HttpHeaders httpHeaders = new HttpHeaders();
         ResponseCookie responseCookie = ResponseCookie
                 .from(HeaderUtil.getRefreshCookieName(), "")
-                .domain("homesage.my")
+                .domain(backServerDomain)
                 .path("/")
                 .httpOnly(true)
                 .secure(true)

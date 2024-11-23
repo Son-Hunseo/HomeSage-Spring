@@ -2,6 +2,7 @@ package com.ssafy.homesage.domain.sale.service;
 
 import com.ssafy.homesage.domain.sale.exception.EmptySalesException;
 import com.ssafy.homesage.domain.sale.mapper.SaleMapper;
+import com.ssafy.homesage.domain.sale.model.dto.SaleMapSearchCondition;
 import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.sale.model.dto.SaleSearchCondition;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +19,6 @@ import java.util.List;
 public class SaleServiceImpl implements SaleService {
 
     private final SaleMapper saleMapper;
-
-    @Override
-    public List<SaleResponseDto> searchSaleListByMapCenter(
-            Double centerLat,
-            Double centerLng,
-            Double radius
-    ) {
-        // 지도 기반 매물 검색 로직
-        // Haversine 공식 등을 활용한 반경 검색
-        return saleMapper.findPropertiesWithinRadius(centerLat, centerLng, radius);
-    }
 
     @Override
     public List<SaleResponseDto> searchSaleList(SaleSearchCondition searchCondition) {
@@ -54,6 +44,11 @@ public class SaleServiceImpl implements SaleService {
                 .orElseThrow(() -> new EmptySalesException());
     }
 
+    @Override
+    public List<SaleResponseDto> searchByMapCenter(Double lat, Double lng, Double radius) {
+        return saleMapper.findByMapCenter(lat, lng, radius);
+    }
+
     private void initSearchCondition(SaleSearchCondition searchCondition) {
         // 모든 필드가 null인지 확인
         boolean isAllNull = (searchCondition.getKeyword() == null || searchCondition.getKeyword().trim().isEmpty())
@@ -69,7 +64,7 @@ public class SaleServiceImpl implements SaleService {
 
         // 모든 값이 null일 경우 keyword를 "강남"으로 설정
         if (isAllNull) {
-            searchCondition.setKeyword("강남");
+            searchCondition.setKeyword("서울");
         }
     }
 

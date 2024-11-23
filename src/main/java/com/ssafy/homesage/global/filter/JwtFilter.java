@@ -24,8 +24,6 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final AuthService authService;
 
-    @Value("${server.ip}")
-    String serverIp;
 
     public JwtFilter(JwtUtil jwtUtil, AuthService authService ) {
         this.jwtUtil = jwtUtil;
@@ -65,7 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
             // 대소문자 주의할 것
             httpServletResponse.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
             httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
-            httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://" + serverIp + ":5173");
+            httpServletResponse.setHeader("Access-Control-Allow-Origin", "https://homesage.my");
             httpServletResponse.setStatus(HttpStatus.OK.value());
             return;
         }
@@ -101,7 +99,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if(accessToken == null || !jwtUtil.isValidToken(accessToken, "AccessToken") || !authService.isValidToken(accessToken)) {
                 httpServletResponse.setStatus(ErrorCode.REFRESH_TOKEN_EXPIRED.getHttpStatus());
                 httpServletResponse.setContentType("application/json;charset=UTF-8");
-                httpServletResponse.setHeader("Access-Control-Allow-Origin", "http://" + serverIp +":5173");
+                httpServletResponse.setHeader("Access-Control-Allow-Origin", "https://homesage.my");
 
                 ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.REFRESH_TOKEN_EXPIRED);
 

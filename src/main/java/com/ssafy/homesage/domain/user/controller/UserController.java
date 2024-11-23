@@ -29,9 +29,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @Value("${server.ip}")
-    private String serverIp;
-
     // 모든 유저 반환
     @GetMapping
     private ResponseEntity<?> getFirstUser() {
@@ -61,7 +58,7 @@ public class UserController {
         HttpHeaders httpHeaders = new HttpHeaders();
         ResponseCookie responseCookie = ResponseCookie
                 .from(HeaderUtil.getRefreshCookieName(), "")
-                .domain(serverIp)
+                .domain("homesage.my")
                 .path("/")
                 .httpOnly(true)
                 .secure(true)

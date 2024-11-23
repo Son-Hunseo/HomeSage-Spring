@@ -75,7 +75,7 @@ public class AuthController {
         // RefreshToken 을 HttpOnly Cookie 로 전달
         ResponseCookie responseCookie = ResponseCookie
                 .from(HeaderUtil.getRefreshCookieName(), userLoginResponseDto.refreshToken())
-                .domain("homesage.my") // 어떤 사이트에서 쿠키를 사용할 수 있도록 허용할지 설정
+                .domain("homesage.shop") // 어떤 사이트에서 쿠키를 사용할 수 있도록 허용할지 설정
                 .path("/") // 사이트 내 쿠키 허용 경로 설정
                 .httpOnly(true) // HTTP 통신을 위해서만 사용하도록 설정
                 .secure(true) // Set-Cookie 설정
@@ -105,7 +105,7 @@ public class AuthController {
         HttpHeaders httpHeaders = new HttpHeaders();
         ResponseCookie responseCookie = ResponseCookie
                 .from(HeaderUtil.getRefreshCookieName(), "")
-                .domain("homesage.my")
+                .domain("homesage.shop")
                 .path("/")
                 .httpOnly(true)
                 .secure(true)

@@ -31,8 +31,8 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     @Value("${server.ip}")
     private String serverIp;
 
-    @Value("${static.port}")
-    private String staticPort;
+    @Value("${static.server.domain}")
+    private String staticServerDomain;
 
     @Value("${ai.port}")
     private String aiPort;
@@ -127,10 +127,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     public void saveRegisteredUrl(int analyzedId, String fileName) {
 
         String url = new StringBuilder()
-                        .append("http://")
-                        .append(serverIp)
-                        .append(":")
-                        .append(staticPort)
+                        .append(staticServerDomain)
                         .append("/static/registered/")
                         .append(fileName)
                         .toString();
@@ -143,10 +140,7 @@ public class AnalyzeServiceImpl implements AnalyzeService {
     public void saveLedgerUrl(int analyzedId, String fileName) {
 
         String url = new StringBuilder()
-                .append("http://")
-                .append(serverIp)
-                .append(":")
-                .append(staticPort)
+                .append(staticServerDomain)
                 .append("/static/ledger/")
                 .append(fileName)
                 .toString();

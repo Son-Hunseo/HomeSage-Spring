@@ -111,9 +111,15 @@ public class UserServiceImpl implements UserService {
         Long userId = findUserId(accessToken);
 
         // 이미 있는 예약이면 예외처리 (같은 건물을 다른 시간대에 예약하려 하는 경우 등)
-        int count = userMapper.findReserveByUserIdAndProviderUserIdAndSaleId(
+        int sameSaleCount = userMapper.findReserveByUserIdAndProviderUserIdAndSaleId(
                 userId, reserveRequestDto.providerUserId(), reserveRequestDto.saleId());
-        if (count != 0) {
+        if (sameSaleCount != 0) {
+            throw new DuplicateReservationException();
+        }
+
+        int sameTimeCount = userMapper.findReserveByUserIdAndReserveDateTime(
+                userId, reserveRequestDto.reserveDate() + " " + reserveRequestDto.reserveTime());
+        if (sameTimeCount != 0) {
             throw new DuplicateReservationException();
         }
 

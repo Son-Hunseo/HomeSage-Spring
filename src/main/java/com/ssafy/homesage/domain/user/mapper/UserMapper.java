@@ -96,6 +96,13 @@ public interface UserMapper {
     """)
     int findReserveByUserIdAndProviderUserIdAndSaleId(Long userId, Long providerUserId, Long saleId);
 
+    @Select("""
+        SELECT COUNT(*)
+        FROM reservations
+        WHERE consumer_user_id = #{userId} AND reservation_datetime=#{reserveDateTime}
+    """)
+    int findReserveByUserIdAndReserveDateTime(Long userId, String reserveDateTime);
+
     /**
      * 예약
      */

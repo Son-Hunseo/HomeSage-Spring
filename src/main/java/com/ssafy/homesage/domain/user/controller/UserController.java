@@ -156,7 +156,7 @@ public class UserController {
         // Http Header 의 Authorization (Access Token) 추출
         String accessToken = HeaderUtil.getAccessToken(request);
 
-        // 찜목록 조회
+        // 예약목록 조회
         List<ReserveResponseDto> reserveResponseDtoList = userService.reserveList(accessToken);
 
         return ResponseEntity.ok(reserveResponseDtoList);

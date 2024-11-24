@@ -49,7 +49,7 @@ jobs:
             -e JWT_REFRESH_TOKEN_KEY=${{ secrets.JWT_REFRESH_TOKEN_KEY }} \
             -e SERVER_IP=${{ secrets.SERVER_IP }} \
             -e AI_SERVER_PORT=${{ secrets.AI_SERVER_PORT }} \
-            -e STATIC_SERVER_URL=${{ secrets.STATIC_SERVER_URL }} \
+            -e STATIC_SERVER_URL=${{ secrets.STATIC_SERVER_DOMAIN }} \
             -e OCR_URL=${{ secrets.OCR_URL }} \
             -e X_OCR_SECRET=${{ secrets.X_OCR_SECRET }} \
             -p 8080:8080 \

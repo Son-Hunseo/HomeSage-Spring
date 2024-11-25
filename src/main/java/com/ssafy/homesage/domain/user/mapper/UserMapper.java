@@ -79,7 +79,7 @@ public interface UserMapper {
         SELECT uis.user_interested_sale_id, uis.sale_id, uis.user_id, 
         s.provider_user_id, s.sale_type, s.home_type, s.price, s.monthly_fee, 
         s.management_fee, s.space, s.description, s.floor, s.near_station,
-        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong, s.sale_img_url
         FROM user_interested_sales uis
         LEFT JOIN sales s ON uis.sale_id = s.sale_id 
         WHERE user_id = #{userId}
@@ -122,13 +122,13 @@ public interface UserMapper {
     void deleteByUserIdAndSaleId(Long userId, Long saleId);
 
     /**
-     * 소비자의 예약 목록 조회
+     * Consumer 의 예약 목록 조회
      */
     @Select("""
         SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
         s.sale_type, s.home_type, s.price, s.monthly_fee, 
         s.management_fee, s.space, s.description, s.floor, s.near_station,
-        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong, s.sale_img_url
         FROM reservations r
         LEFT JOIN sales s ON r.sale_id = s.sale_id
         WHERE r.consumer_user_id = #{userId}
@@ -136,27 +136,38 @@ public interface UserMapper {
     List<ReserveResponseDto> findAllReserveListByUserId(Long userId);
 
     /**
-     * 관리자의 자신이 관리 중인 상품 조회
+     * Provider 의 자신이 관리 중인 상품 조회
      */
     @Select("""
         SELECT sale_id, provider_user_id, sale_type, home_type, price, monthly_fee, management_fee, 
-        space, description, floor, near_station, city, gu, dong, latitude, longitude, city_gu_dong
+        space, description, floor, near_station, city, gu, dong, latitude, longitude, city_gu_dong, sale_img_url
         FROM sales
         WHERE provider_user_id = #{userId}
     """)
     List<SaleResponseDto> findAllSalesByProviderUserId(Long userId);
 
     /**
-     * 판매자의 예약 목록 조회
+     * Provider 의 예약 목록 조회
      */
     @Select("""
         SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
         s.sale_type, s.home_type, s.price, s.monthly_fee, 
         s.management_fee, s.space, s.description, s.floor, s.near_station,
-        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong
+        s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong, s.sale_img_url
         FROM reservations r
         LEFT JOIN sales s ON r.sale_id = s.sale_id
         WHERE r.provider_user_id = #{userId}
     """)
     List<ReserveResponseDto> findAllReserveListByProviderUserId(Long userId);
+
+
+    /**
+     * Provider 인지 여부 확인
+     */
+    @Select("""
+        SELECT count(*)
+        FROM users
+        WHERE user_id=#{userId} AND role='PROVIDER'
+    """)
+    int findRoleByUserId(Long userId);
 }

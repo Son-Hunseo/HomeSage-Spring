@@ -3,10 +3,8 @@ package com.ssafy.homesage.domain.sale.mapper;
 import com.ssafy.homesage.domain.sale.model.dto.SaleMapSearchCondition;
 import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.sale.model.dto.SaleSearchCondition;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
+import com.ssafy.homesage.domain.sale.model.dto.SaleUploadRequestDto;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +36,8 @@ public interface SaleMapper {
             dong,
             latitude,
             longitude,
-            city_gu_dong as cityGuDong
+            city_gu_dong as cityGuDong,
+            sale_img_url as saleImgUrl,
         FROM sales
         WHERE sale_id = #{saleId}
     """)
@@ -78,4 +77,45 @@ public interface SaleMapper {
             @Param("lat") Double lat,
             @Param("lng") Double lng,
             @Param("radius") Double radius);
+
+    @Insert("""
+        INSERT INTO sales (
+            provider_user_id,
+            sale_type,
+            home_type,
+            price,
+            monthly_fee,
+            management_fee,
+            space,
+            description,
+            floor,
+            near_station,
+            city,
+            gu,
+            dong,
+            latitude,
+            longitude,
+            city_gu_dong,
+            sale_img_url
+        ) VALUES (
+            #{providerUserId},
+            #{saleType},
+            #{homeType},
+            #{price},
+            #{monthlyFee},
+            #{managementFee},
+            #{space},
+            #{description},
+            #{floor},
+            #{nearStation},
+            #{city},
+            #{gu},
+            #{dong},
+            #{latitude},
+            #{longitude},
+            #{cityGuDong},
+            #{saleImgUrl}
+        )
+    """)
+    void insertSale(SaleUploadRequestDto saleUploadRequestDto);
 }

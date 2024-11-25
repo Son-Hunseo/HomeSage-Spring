@@ -10,6 +10,7 @@ import com.ssafy.homesage.global.util.HashUtil;
 import com.ssafy.homesage.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,6 +148,7 @@ public class UserServiceImpl implements UserService {
     public List<ReserveResponseDto> reserveList(String accessToken) {
         // userId 조회
         Long userId = findUserId(accessToken);
+        log.info("[UserService reserveList()] UserId: {}", userId);
 
         // 예약 목록 조회
         List<ReserveResponseDto> reserveResponseDtoList =
@@ -181,6 +183,7 @@ public class UserServiceImpl implements UserService {
     public List<ReserveResponseDto> providerReserveList(String accessToken) {
         // userId 조회
         Long userId = findUserId(accessToken);
+        log.info("[UserService providerReserveList()] UserId: {}", userId);
 
         // 예약 된 상품 목록 조회
         List<ReserveResponseDto> reserveResponseDtoList

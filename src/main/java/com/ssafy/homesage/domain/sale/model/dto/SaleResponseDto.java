@@ -20,6 +20,7 @@ public record SaleResponseDto(
         String dong,
         Double latitude,
         Double longitude,
-        String cityGuDong
+        String cityGuDong,
+        String saleImgUrl
         ) {
 }

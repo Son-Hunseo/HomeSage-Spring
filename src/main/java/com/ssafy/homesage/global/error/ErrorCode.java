@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
+	USER_NOT_PROVIDER(HttpStatus.UNAUTHORIZED.value(), "판매자만 이용 가능합니다."),
 	EMPTY_TOKEN(HttpStatus.BAD_REQUEST.value(), "가지고 있는 토큰이 없습니다."),
 	EMPTY_SALES(HttpStatus.NO_CONTENT.value(), "검색 된 상품이 없습니다."),
 	EMPTY_MANAGE_SALES(HttpStatus.NO_CONTENT.value(), "관리 중인 상품이 없습니다."),

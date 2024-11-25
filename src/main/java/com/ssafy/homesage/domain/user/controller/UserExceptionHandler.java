@@ -5,6 +5,7 @@ import com.ssafy.homesage.domain.user.exception.*;
 import com.ssafy.homesage.global.error.ErrorCode;
 import com.ssafy.homesage.global.error.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -78,7 +79,7 @@ public class UserExceptionHandler {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_RESERVES);
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse);
     }
 
     @Operation(summary = "관리 중인 상품이 없음")
@@ -87,6 +88,15 @@ public class UserExceptionHandler {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_MANAGE_SALES);
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(errorResponse);
+    }
+
+    @Operation(summary = "해당 유저가 PROVIDER 가 아님")
+    @ExceptionHandler(value = {UserNotProviderException.class})
+    public ResponseEntity<?> userNotProviderHandler(NullPointerException e) {
+
+        ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.USER_NOT_PROVIDER);
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
     }
 }

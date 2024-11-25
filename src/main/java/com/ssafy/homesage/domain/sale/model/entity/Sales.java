@@ -28,6 +28,7 @@ public class Sales {
     private String cityGuDong;
     private Double latitude;
     private Double longitude;
+    private String saleImgUrl;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -97,6 +98,17 @@ public class SaleServiceImpl implements SaleService {
         }
 
         throw new UserNotProviderException();
+    }
+
+    @Override
+    public List<LocalDateTime> reserveSaleTime(Long saleId) {
+        List<LocalDateTime> reserveTime = saleMapper.findReservationDatetimeBySaleId(saleId);
+
+        if (reserveTime.isEmpty()) {
+            throw new EmptySalesException();
+        }
+
+        return reserveTime;
     }
 
     /**

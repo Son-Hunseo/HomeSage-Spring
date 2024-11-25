@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -75,6 +76,18 @@ public class SaleController {
                 saleService.saleDetail(saleId);
 
         return ResponseEntity.ok().body(saleResponseDto);
+    }
+
+    @Operation(summary = "매물의 예약 완료 된 시간 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "매물 정보 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "매물 정보 조회 실패")
+    })
+    @GetMapping("/reserve/{saleId}")
+    public ResponseEntity<?> reserveSaleTime(@PathVariable Long saleId) {
+        List<LocalDateTime> reserveTime = saleService.reserveSaleTime(saleId);
+
+        return ResponseEntity.ok(reserveTime);
     }
 
     @Operation(summary = "PROVIDER - 상품 등록")

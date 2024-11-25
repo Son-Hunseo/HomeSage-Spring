@@ -19,6 +19,6 @@ public class SalesExceptionHandler {
 
         ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.EMPTY_SALES);
 
-        return ResponseEntity.badRequest().body(errorResponse);
+        return ResponseEntity.internalServerError().body(errorResponse);
     }
 }

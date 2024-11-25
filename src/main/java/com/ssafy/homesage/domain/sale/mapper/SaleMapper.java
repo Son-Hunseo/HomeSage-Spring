@@ -6,6 +6,7 @@ import com.ssafy.homesage.domain.sale.model.dto.SaleSearchCondition;
 import com.ssafy.homesage.domain.sale.model.dto.SaleUploadRequestDto;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ public interface SaleMapper {
     @SelectProvider(type = SaleSqlProvider.class, method = "findBySearchCondition")
     List<SaleResponseDto> findBySearchCondition(SaleSearchCondition searchCondition);
 
+    /**
+     * saleId 를 통해 매물 상세 정보 조회
+     */
     @Select("""
         SELECT 
             s.sale_id as saleId,
@@ -45,6 +49,9 @@ public interface SaleMapper {
     """)
     Optional<SaleResponseDto> findById(Long saleId);
 
+    /**
+     * 지도가 움직일 시 인근 매물 정보 조회
+     */
     @Select("""
         SELECT 
             s.sale_id as saleId,
@@ -83,6 +90,9 @@ public interface SaleMapper {
             @Param("lng") Double lng,
             @Param("radius") Double radius);
 
+    /**
+     * 매물 등록
+     */
     @Insert("""
         INSERT INTO sales (
             provider_user_id,
@@ -123,4 +133,15 @@ public interface SaleMapper {
         )
     """)
     void insertSale(SaleUploadRequestDto saleUploadRequestDto);
+
+    /**
+     * 해당 매물의 예약된 시간 조회
+     */
+    @Select("""
+        SELECT reservation_datetime
+        FROM reservations
+        WHERE sale_id = #{saleId}
+        ORDER BY reservation_datetime
+    """)
+    List<LocalDateTime> findReservationDatetimeBySaleId(Long saleId);
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 public record SaleResponseDto(
         Long saleId,
         Long providerUserId,
+        String providerUserName,
         String saleType,
         String homeType,
         Integer price,

@@ -124,10 +124,18 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateReservationException();
         }
 
+        // userId 를 통해 consumer name 조회
+        String consumerUserName = userMapper.findNameByUserId(userId);
+
+        // providerUserId 를 통해 provider name 조회
+        String providerUserName = userMapper.findNameByUserId(reserveRequestDto.providerUserId());
+
         // 예약
         ReserveRequestDto insertReserveRequestDto = ReserveRequestDto.builder()
                 .consumerUserId(userId)
+                .consumerUserName(consumerUserName)
                 .providerUserId(reserveRequestDto.providerUserId())
+                .providerUserName(providerUserName)
                 .saleId(reserveRequestDto.saleId())
                 .reserveDateTime(reserveRequestDto.reserveDate() + " " + reserveRequestDto.reserveTime())
                 .build();

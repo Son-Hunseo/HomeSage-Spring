@@ -20,25 +20,27 @@ public interface SaleMapper {
 
     @Select("""
         SELECT 
-            sale_id as saleId,
-            provider_user_id as providerUserId,
-            sale_type as saleType,
-            home_type as homeType,
-            price,
-            monthly_fee as monthlyFee,
-            management_fee as managementFee,
-            space,
-            description,
-            floor,
-            near_station as nearStation,
-            city,
-            gu,
-            dong,
-            latitude,
-            longitude,
-            city_gu_dong as cityGuDong,
-            sale_img_url as saleImgUrl
-        FROM sales
+            s.sale_id as saleId,
+            s.provider_user_id as providerUserId,
+            u.name as providerUserName,
+            s.sale_type as saleType,
+            s.home_type as homeType,
+            s.price,
+            s.monthly_fee as monthlyFee,
+            s.management_fee as managementFee,
+            s.space,
+            s.description,
+            s.floor,
+            s.near_station as nearStation,
+            s.city,
+            s.gu,
+            s.dong,
+            s.latitude,
+            s.longitude,
+            s.city_gu_dong as cityGuDong,
+            s.sale_img_url as saleImgUrl
+        FROM sales s
+        LEFT JOIN users u ON s.provider_user_id = u.user_id 
         WHERE sale_id = #{saleId}
     """)
     Optional<SaleResponseDto> findById(Long saleId);
@@ -47,6 +49,7 @@ public interface SaleMapper {
         SELECT 
             s.sale_id as saleId,
             s.provider_user_id as providerUserId,
+            u.name as providerUserName,
             s.sale_type as saleType,
             s.home_type as homeType,
             s.price as price,
@@ -68,6 +71,7 @@ public interface SaleMapper {
                 point(#{lng}, #{lat})
             ) as distance
         FROM sales s
+        LEFT JOIN users u ON s.provider_user_id = u.user_id
         WHERE ST_Distance_Sphere(
             point(s.longitude, s.latitude),
             point(#{lng}, #{lat})

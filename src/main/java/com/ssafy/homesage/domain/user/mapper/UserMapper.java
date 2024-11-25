@@ -45,6 +45,16 @@ public interface UserMapper {
     Long findIdByEmail(String userEmail);
 
     /**
+     * userId 를 통해 name 을 조회한다.
+     */
+    @Select("""
+        SELECT name
+        FROM users
+        WHERE user_id = #{userId}
+    """)
+    String findNameByUserId(Long userId);
+
+    /**
      * 찜목록에 데이터가 있는지 확인한다.
      */
     @Select("""
@@ -77,12 +87,13 @@ public interface UserMapper {
      */
     @Select("""
         SELECT uis.user_interested_sale_id, uis.sale_id, uis.user_id, 
-        s.provider_user_id, s.sale_type, s.home_type, s.price, s.monthly_fee, 
+        s.provider_user_id, u.name, s.sale_type, s.home_type, s.price, s.monthly_fee, 
         s.management_fee, s.space, s.description, s.floor, s.near_station,
         s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong, s.sale_img_url
         FROM user_interested_sales uis
         LEFT JOIN sales s ON uis.sale_id = s.sale_id 
-        WHERE user_id = #{userId}
+        LEFT JOIN users u ON s.provider_user_id = u.user_id
+        WHERE uis.user_id = #{userId}
     """)
     List<InterestedSalesResponseDto> findAllUserInterestedSales(Long userId);
 
@@ -107,8 +118,8 @@ public interface UserMapper {
      * 예약
      */
     @Insert("""
-        INSERT INTO reservations (consumer_user_id, provider_user_id, sale_id, reservation_datetime)
-        VALUES (#{consumerUserId}, #{providerUserId}, #{saleId}, #{reserveDateTime})
+        INSERT INTO reservations (consumer_user_id, consumer_user_name, provider_user_id, provider_user_name, sale_id, reservation_datetime)
+        VALUES (#{consumerUserId}, #{consumerUserName}, #{providerUserId}, #{providerUserName}, #{saleId}, #{reserveDateTime})
     """)
     void insertReservation(ReserveRequestDto reserveRequestDto);
 
@@ -125,7 +136,7 @@ public interface UserMapper {
      * Consumer 의 예약 목록 조회
      */
     @Select("""
-        SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
+        SELECT r.sale_id, r.consumer_user_id, r.consumer_user_name, r.provider_user_id, r.provider_user_name, r.reservation_datetime,
         s.sale_type, s.home_type, s.price, s.monthly_fee, 
         s.management_fee, s.space, s.description, s.floor, s.near_station,
         s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong, s.sale_img_url
@@ -150,7 +161,7 @@ public interface UserMapper {
      * Provider 의 예약 목록 조회
      */
     @Select("""
-        SELECT r.sale_id, r.consumer_user_id, r.provider_user_id, r.reservation_datetime,
+        SELECT r.sale_id, r.consumer_user_id, r.consumer_user_name, r.provider_user_id, r.provider_user_name, r.reservation_datetime,
         s.sale_type, s.home_type, s.price, s.monthly_fee, 
         s.management_fee, s.space, s.description, s.floor, s.near_station,
         s.city, s.gu, s.dong, s.latitude, s.longitude, s.city_gu_dong, s.sale_img_url

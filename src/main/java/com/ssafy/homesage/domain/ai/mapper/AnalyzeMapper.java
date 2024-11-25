@@ -83,7 +83,7 @@ public interface AnalyzeMapper {
      * 분석방의 id에 해당하는 분석 Info 반환
      */
     @Select("""
-        SELECT registered_img_url, ledger_img_url, registered_result_text, ledger_result_text
+        SELECT registered_img_url, ledger_img_url, registered_result_text, ledger_result_text, registered_summary_text, ledger_summary_text, registered_score, ledger_score
         FROM analyzes
         WHERE analyze_id = #{analyzeId};
     """)
@@ -127,16 +127,16 @@ public interface AnalyzeMapper {
 
     @Update("""
         UPDATE analyzes
-        SET registered_result_text = #{result}
+        SET registered_result_text = #{result}, registered_summary_text = #{summary}, registered_score = #{score}
         WHERE analyze_id = #{analyzedId};
     """)
-    void insertRegisteredAnalyzeResult(String result, int analyzedId);
+    void insertRegisteredAnalyzeResult(String result, String summary, String score, int analyzedId);
 
     @Update("""
         UPDATE analyzes
-        SET ledger_result_text = #{result}
+        SET registered_result_text = #{result}, registered_summary_text = #{summary}, registered_score = #{score}
         WHERE analyze_id = #{analyzedId};
     """)
-    void insertLedgerAnalyzeResult(String result, int analyzedId);
+    void insertLedgerAnalyzeResult(String result, String summary, String score, int analyzedId);
 
 }

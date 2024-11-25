@@ -182,15 +182,19 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 .bodyToMono(AIServerRegisteredAnalyzeResponseDto.class)
                 .map(response -> {
                     String result = response.result();
+                    String summary = response.summary();
+                    String score = response.score();
                     return AnalyzeResultResponseDto
                             .builder()
                             .result(result)
+                            .summary(summary)
+                            .score(score)
                             .build();
                 });
 
         // 응답 받은 분석 결과를 DB에 저장
         aiResponseMono.subscribe(aiResponse -> analyzeMapper.insertRegisteredAnalyzeResult(
-                aiResponse.result(), analyzedId));
+                aiResponse.result(), aiResponse.summary(), aiResponse.score(), analyzedId));
 
         return aiResponseMono.toFuture();
     }
@@ -229,15 +233,19 @@ public class AnalyzeServiceImpl implements AnalyzeService {
                 .bodyToMono(AIServerLedgerAnalyzeResponseDto.class)
                 .map(response -> {
                     String result = response.result();
+                    String summary = response.summary();
+                    String score = response.score();
                     return AnalyzeResultResponseDto
                             .builder()
                             .result(result)
+                            .summary(summary)
+                            .score(score)
                             .build();
                 });
 
         // 응답 받은 분석 결과를 DB에 저장
         aiResponseMono.subscribe(aiResponse -> analyzeMapper.insertLedgerAnalyzeResult(
-                aiResponse.result(), analyzedId));
+                aiResponse.result(), aiResponse.summary(), aiResponse.score(), analyzedId));
 
         return aiResponseMono.toFuture();
     }

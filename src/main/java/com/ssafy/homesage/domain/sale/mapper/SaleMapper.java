@@ -37,42 +37,43 @@ public interface SaleMapper {
             latitude,
             longitude,
             city_gu_dong as cityGuDong,
-            sale_img_url as saleImgUrl,
+            sale_img_url as saleImgUrl
         FROM sales
         WHERE sale_id = #{saleId}
     """)
     Optional<SaleResponseDto> findById(Long saleId);
 
     @Select("""
-                SELECT 
-                    s.sale_id,
-                    s.provider_user_id,
-                    s.sale_type,
-                    s.home_type,
-                    s.price,
-                    s.monthly_fee,
-                    s.management_fee,
-                    s.space,
-                    s.description,
-                    s.floor,
-                    s.near_station,
-                    s.city,
-                    s.gu,
-                    s.dong,
-                    s.latitude,
-                    s.longitude,
-                    CONCAT(s.city, ' ', s.gu, ' ', s.dong) as city_gu_dong,
-                    ST_Distance_Sphere(
-                        point(s.longitude, s.latitude),
-                        point(#{lng}, #{lat})
-                    ) as distance
-                FROM sales s
-                WHERE ST_Distance_Sphere(
-                    point(s.longitude, s.latitude),
-                    point(#{lng}, #{lat})
-                ) <= #{radius}
-                ORDER BY distance ASC
-            """)
+        SELECT 
+            s.sale_id as saleId,
+            s.provider_user_id as providerUserId,
+            s.sale_type as saleType,
+            s.home_type as homeType,
+            s.price as price,
+            s.monthly_fee as monthlyFee,
+            s.management_fee as managementFee,
+            s.space as space,
+            s.description as description,
+            s.floor as floor,
+            s.near_station as nearStation,
+            s.city as city,
+            s.gu as gu,
+            s.dong as dong,
+            s.latitude as latitude,
+            s.longitude as longitude,
+            s.city_gu_dong as cityGuDong,
+            s.sale_img_url as saleImgUrl,
+            ST_Distance_Sphere(
+                point(s.longitude, s.latitude),
+                point(#{lng}, #{lat})
+            ) as distance
+        FROM sales s
+        WHERE ST_Distance_Sphere(
+            point(s.longitude, s.latitude),
+            point(#{lng}, #{lat})
+        ) <= #{radius}
+        ORDER BY distance ASC
+    """)
     List<SaleResponseDto> findByMapCenter(
             @Param("lat") Double lat,
             @Param("lng") Double lng,

@@ -8,7 +8,9 @@ import java.time.LocalDateTime;
 public record ReserveResponseDto(
         Long saleId,
         Long consumerUserId,
+        String consumerUserName,
         Long providerUserId,
+        String providerUserName,
         LocalDateTime reservationDatetime,
         String saleType,
         String homeType,

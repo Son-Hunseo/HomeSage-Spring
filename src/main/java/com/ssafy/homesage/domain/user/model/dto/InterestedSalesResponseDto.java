@@ -8,6 +8,7 @@ public record InterestedSalesResponseDto(
         Long saleId,
         Long userId,
         Long providerUserId,
+        String providerUserName,
         String saleType,
         String homeType,
         Integer price,

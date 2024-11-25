@@ -93,6 +93,7 @@ public class SaleServiceImpl implements SaleService {
 
             // 매물 정보 저장
             saleMapper.insertSale(saleUploadRequestDto);
+            return;
         }
 
         throw new UserNotProviderException();

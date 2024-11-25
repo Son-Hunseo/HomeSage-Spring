@@ -2,15 +2,21 @@ package com.ssafy.homesage.domain.sale.controller;
 
 import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
 import com.ssafy.homesage.domain.sale.model.dto.SaleSearchCondition;
+import com.ssafy.homesage.domain.sale.model.dto.SaleUploadRequestDto;
 import com.ssafy.homesage.domain.sale.service.SaleService;
+import com.ssafy.homesage.global.util.HeaderUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -57,9 +63,6 @@ public class SaleController {
         }
     }
 
-    /**
-     * 상세 조회
-     */
     @Operation(summary = "매물 상세 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
@@ -72,5 +75,26 @@ public class SaleController {
                 saleService.saleDetail(saleId);
 
         return ResponseEntity.ok().body(saleResponseDto);
+    }
+
+    @Operation(summary = "PROVIDER - 상품 등록")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 등록 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "상품 등록 실패")
+    })
+    @PostMapping(value = "/provider/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> saleUpload(
+            @Valid @RequestPart("data") SaleUploadRequestDto request,
+            @RequestPart("file") MultipartFile file,
+            HttpServletRequest httpRequest) {
+
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        String accessToken = HeaderUtil.getAccessToken(httpRequest);
+        saleService.uploadSaleWithImage(request, file, accessToken);
+        return ResponseEntity.ok().build();
     }
 }

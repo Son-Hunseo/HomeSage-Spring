@@ -2,15 +2,25 @@ package com.ssafy.homesage.domain.sale.service;
 
 import com.ssafy.homesage.domain.sale.exception.EmptySalesException;
 import com.ssafy.homesage.domain.sale.mapper.SaleMapper;
-import com.ssafy.homesage.domain.sale.model.dto.SaleMapSearchCondition;
-import com.ssafy.homesage.domain.sale.model.dto.SaleResponseDto;
-import com.ssafy.homesage.domain.sale.model.dto.SaleSearchCondition;
+import com.ssafy.homesage.domain.sale.model.dto.*;
+import com.ssafy.homesage.domain.user.exception.UserNotFoundException;
+import com.ssafy.homesage.domain.user.exception.UserNotProviderException;
+import com.ssafy.homesage.domain.user.mapper.UserMapper;
+import com.ssafy.homesage.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -19,6 +29,12 @@ import java.util.List;
 public class SaleServiceImpl implements SaleService {
 
     private final SaleMapper saleMapper;
+    private final UserMapper userMapper;
+    private final JwtUtil jwtUtil;
+
+    @Value("${static.server.domain}")
+    private String staticServerDomain;
+    private final String uploadDir = "/app/image/sale/";
 
     @Override
     public List<SaleResponseDto> searchSaleList(SaleSearchCondition searchCondition) {
@@ -49,6 +65,62 @@ public class SaleServiceImpl implements SaleService {
         return saleMapper.findByMapCenter(lat, lng, radius);
     }
 
+    @Override
+    public void uploadSaleWithImage(
+            SaleUploadRequestDto saleUploadRequestDto,
+            MultipartFile file,
+            String accessToken) {
+
+        // 토큰에서 사용자의 이메일 추출
+        String userEmail = jwtUtil.getUserEmail(accessToken, "AccessToken");
+
+        // 이메일을 통해 userId 조회
+        Long userId = userMapper.findIdByEmail(userEmail);
+        int isProvider = userMapper.findRoleByUserId(userId);
+
+        if (isProvider != 0) {
+            // 이미지 업로드
+            String imageUrl = null;
+            try {
+                imageUrl = uploadImage(file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            saleUploadRequestDto.setSaleImgUrl(staticServerDomain + "/static/sale/" + imageUrl);
+            saleUploadRequestDto.setProviderUserId(userId);
+            saleUploadRequestDto.setCityGuDong(saleUploadRequestDto.generateCityGuDong());
+
+            // 매물 정보 저장
+            saleMapper.insertSale(saleUploadRequestDto);
+        }
+
+        throw new UserNotProviderException();
+    }
+
+    /**
+     * 이미지 파일 이름 세팅
+     */
+    private String uploadImage(MultipartFile file) throws IOException {
+        // 디렉토리 생성
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        // 파일명 생성 및 저장
+        String originalFilename = file.getOriginalFilename();
+        String uniqueFileName = UUID.randomUUID() + "_" + originalFilename;
+        Path path = Paths.get(uploadDir + uniqueFileName);
+
+        Files.write(path, file.getBytes());
+
+        return uniqueFileName;
+    }
+
+    /**
+     * 검색 조건 초기화
+     */
     private void initSearchCondition(SaleSearchCondition searchCondition) {
         // 모든 필드가 null인지 확인
         boolean isAllNull = (searchCondition.getKeyword() == null || searchCondition.getKeyword().trim().isEmpty())
@@ -67,5 +139,4 @@ public class SaleServiceImpl implements SaleService {
             searchCondition.setKeyword("서울");
         }
     }
-
 }

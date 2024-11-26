@@ -38,7 +38,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 필터를 거치치 않을 URI 설정.
         String[] excludeURIList = {
                 "/auth/login", "/auth/signUp", "/auth/logout",
-                "/auth/checkEmail", "/auth/refresh", "/sales",
+                "/auth/checkEmail", "/auth/refresh", "/sales/**",
                 "swagger-ui", "api-docs", "/info"
         };
 

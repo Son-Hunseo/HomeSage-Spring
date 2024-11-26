@@ -134,7 +134,7 @@ public interface AnalyzeMapper {
 
     @Update("""
         UPDATE analyzes
-        SET registered_result_text = #{result}, registered_summary_text = #{summary}, registered_score = #{score}
+        SET ledger_result_text = #{result}, ledger_summary_text = #{summary}, ledger_score = #{score}
         WHERE analyze_id = #{analyzedId};
     """)
     void insertLedgerAnalyzeResult(String result, String summary, String score, int analyzedId);
